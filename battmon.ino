@@ -756,17 +756,17 @@ void SingleCommand() {
     else return;
     switch (cmd_getType(singleCmdList.low.i)) {
       case BATT_MAH:
-        valueBuffer = wordBuffer/1000;
+        valueBuffer = (float)wordBuffer/1000;
         fmtDouble(valueBuffer, 6, i2cBuffer, bufferLen);
         strcpy_P(i2cBuffer+strcspn(i2cBuffer, 0), PSTR(" Ah"));
         break;
       case BATT_MA:
-        valueBuffer = wordBuffer/1000;
+        valueBuffer = (float)wordBuffer/1000;
         fmtDouble(valueBuffer, 6, i2cBuffer, bufferLen);
         strcpy_P(i2cBuffer+strcspn(i2cBuffer, 0), PSTR(" A"));
         break;
       case BATT_MV:
-        valueBuffer = wordBuffer/1000;
+        valueBuffer = (float)wordBuffer/1000;
         fmtDouble(valueBuffer, 6, i2cBuffer, bufferLen);
         strcpy_P(i2cBuffer+strcspn(i2cBuffer, 0), PSTR(" V"));
         break;
