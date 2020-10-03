@@ -76,7 +76,7 @@ phi_analog_keypads my_btns(mapping, pins, values, 1, 5); // buttons_per_row is 1
 phi_serial_keypads debug_keypad(&Serial, 9600);
 
 // The following adds all available keypads as inputs for phi_prompt library
-multiple_button_input * keypads[]={&my_btns, &debug_keypad, 0};
+multiple_button_input * keypads[] = {&my_btns, &debug_keypad, 0};
 
 // Define global variables
 #define bufferLen 32
@@ -359,38 +359,33 @@ void setup() {
   
   mainMenu.ptr.list = (char**)&main_menu_items; // Assign the list to the pointer
   mainMenu.high.i = (sizeof(main_menu_items) / sizeof(&main_menu_items)) - 1; // Last item of the list is size of the list - 1
-  controlMenu.ptr.list = (char**)&control_menu_items;
-  controlMenu.high.i = (sizeof(control_menu_items) / sizeof(&control_menu_items)) - 1;
-  readMenu.ptr.list = (char**)&read_menu_items;
-  readMenu.high.i = (sizeof(read_menu_items) / sizeof(&read_menu_items)) - 1;
   setupMenu.ptr.list = (char**)&setup_menu_items;
   setupMenu.high.i = (sizeof(setup_menu_items) / sizeof(&setup_menu_items)) - 1;
+  readMenu.ptr.list = (char**)&read_menu_items;
+  readMenu.high.i = (sizeof(read_menu_items) / sizeof(&read_menu_items)) - 1;
+  controlMenu.ptr.list = (char**)&control_menu_items;
+  controlMenu.high.i = (sizeof(control_menu_items) / sizeof(&control_menu_items)) - 1;
   commandMenu.ptr.list = (char**)&cmdset_items;
   commandMenu.high.i = (sizeof(cmdset_items) / sizeof(&cmdset_items)) - 1;
 }
 
 void loop() {
-  // Dummy loop() statement since we're sorta abstracting C into an object-oriented layout here ... just enters into a menu loop and stays there, this never loops
-  main_menu(); // ... I could probably do something really nasty here like erase the flash, and it'd never know
-}
-
-void main_menu() {
   while(1) { // This loops every time a menu item is selected
     lcd.clear(); // Refresh menu if a button has been pushed
     select_list(&mainMenu); // Use the select_list to ask the user to select an item of the list, that is a menu item from your menu
     while (wait_on_escape(25)); // Let go please
     switch (mainMenu.low.i) {
-      case 0:
-        DisplaySetupMenu();
-        break;
-      case 1:
-        DisplayReadMenu();
-        break;
-      case 2:
-        DisplayControlMenu(); // Display submenu, will return here upon exiting menu
-        break;
-      default:
-        break;
+	  case 0:
+	    DisplaySetupMenu();
+	    break;
+	  case 1:
+	    DisplayReadMenu();
+	    break;
+	  case 2:
+	    DisplayControlMenu(); // Display submenu, will return here upon exiting menu
+	    break;
+	  default:
+	    break;
     }
     delay(500);
   }
@@ -400,7 +395,7 @@ void DisplaySetupMenu() {
   while(1) {
     lcd.clear();
     if (select_list(&setupMenu) == -3) return; // Left arrow -> go back to main menu
-    while (wait_on_escape(25)); // let go please
+    while (wait_on_escape(25)); // Let go please
     switch (setupMenu.low.i) {
       case 0:
         TestSMBus();
@@ -554,7 +549,7 @@ void ScanSMBus() {
       lcd.print(addr, HEX);
       lcd.write(')');
       scroll_bar_v(cursorPos*99/foundI2C, lcd_columns - 1, 0, lcd_rows);
-      while ((button_status = wait_on_escape(500)) == 0) ;
+      while ((button_status = wait_on_escape(500)) == 0);
       switch (button_status) {
         case 1:
           scanDirection = 1;
@@ -575,7 +570,7 @@ void ScanSMBus() {
           strcpy(i2cBuffer, "Using: ");
           itoa(deviceAddress, i2cBuffer + 7, 2);
           ok_dialog(i2cBuffer);
-          while (wait_on_escape(25)) ; // Wait for release
+          while (wait_on_escape(25)); // Wait for release
           return;
           break;
         default:
@@ -742,8 +737,8 @@ void Statistics() {
 void SingleCommand() {
   int wordBuffer;
   double valueBuffer;
-  singleCmdList.ptr.list=cmd_getPtr(); // Grab the currently selected command list in a pointer
-  singleCmdList.high.i=cmd_getLength() - 1;
+  singleCmdList.ptr.list = cmd_getPtr(); // Grab the currently selected command list in a pointer
+  singleCmdList.high.i = cmd_getLength() - 1;
   while(1) {
     lcd.clear();
     if (select_list(&singleCmdList) == -3) return; // left: exit
@@ -819,12 +814,12 @@ void ControlWriteWord() {
   int menuSelection;
 
   lcd.clear(); // Clear the lcd
-  msg_lcd(PSTR("Adr -WRITE- Val ")); // Prompt user for input
+  msg_lcd(PSTR("Addr -WRITE- Val")); // Prompt user for input
   lcd.setCursor(0, 1);
   msg_lcd(PSTR("0x..      0x0000"));
   // Common parameters
   inputHex.low.c = 'A'; // Text panel valid input starts with character 'A'
-  inputHex.high.c = 'F'; // Text panel valid input ends with character 'Z'
+  inputHex.high.c = 'F'; // Text panel valid input ends with character 'F'
   inputHex.row = 1; // Display input panel at row 1
   inputHex.option = 1; // Option 1 incluess 0-9 as valid characters
 
@@ -852,7 +847,7 @@ void ControlWriteWord() {
             i2c_smbus_write_word(serialCommand,serialData); // Write value with command (value converted from string in default above; command converted before we got here)
             lcd.setCursor(5, 1);
             msg_lcd(PSTR("-OK-"));
-            while (wait_on_escape(500) == 0) ; // Wait for button press
+            while (wait_on_escape(500) == 0); // Wait for button press
           case -1: // Escape (return to menu)
             return;
             break; // Dummy break, won't reach this
@@ -877,7 +872,7 @@ void ControlReadWord() {
   msg_lcd(PSTR("0x..      0x...."));
 
   char textAddress[3] = "00"; // This is the buffer that will store the content of the text panel
-  inputHex.ptr.msg=textAddress; // Assign the text buffer address
+  inputHex.ptr.msg = textAddress; // Assign the text buffer address
   inputHex.low.c = 'A'; // Text panel valid input starts with character 'A'
   inputHex.high.c = 'F'; // Text panel valid input ends with character 'F'
   inputHex.width = 2; // Length of the input panel is 2 characters
@@ -911,7 +906,7 @@ void ControlReadBlock() {
   char textAddress[3] = "00"; // This is the buffer that will store the content of the text panel
   inputHex.ptr.msg = textAddress; // Assign the text buffer address
   inputHex.low.c = 'A'; // Text panel valid input starts with character 'A'
-  inputHex.high.c = 'F'; // Text panel valid input ends with character 'Z'
+  inputHex.high.c = 'F'; // Text panel valid input ends with character 'F'
   inputHex.width = 3; // Length of the input panel is 3 characters
   inputHex.col = 7; // Display input panel at column 7
   inputHex.row = 1; // Display input panel at row 1
@@ -930,7 +925,7 @@ void ControlReadBlock() {
     if (bytesReceived > 0 && bytesReceived <= 16) lcd.print(i2cBuffer); // More than 0 bytes, less than 16
     else msg_lcd(PSTR("ERR:Invalid Data"));
     while (wait_on_escape(25)); // Wait for buttons to be up, may have residual press from menu
-    while (wait_on_escape(500) == 0) ; // Wait for any button to continue
+    while (wait_on_escape(500) == 0); // Wait for any button to continue
   }
   while (wait_on_escape(25)); // Wait for no button press
 }
