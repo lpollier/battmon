@@ -660,7 +660,7 @@ void ChargeData() {
   }
   lcd.setCursor(0, 0);
   msg_lcd(PSTR("V    A    % "));
-  lcd.write(0xDF); // We can place a ° special character here
+  lcd.write(0xDF); // Place a '°' special character here
   lcd.write('C');
   lcd.setCursor(2, 0);
   lcd.write((uint8_t)0); lcd.write((uint8_t)1);
@@ -782,7 +782,8 @@ void SingleCommand() {
       case BATT_TENTH_K:
         valueBuffer = (float)wordBuffer/10 - 273.15;
         fmtDouble(valueBuffer, 6, i2cBuffer, bufferLen);
-        strcpy_P(i2cBuffer+strcspn(i2cBuffer, 0), PSTR(" C")); // There is no ° character in ASCII table
+        strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR("\xDF")); // Place a '°' special character here
+        strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR("C"));
         break;
       case BATT_BITFIELD:
         itoa(wordBuffer, i2cBuffer, 2);
