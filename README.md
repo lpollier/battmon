@@ -46,7 +46,7 @@ Here is one connection example between a Sony Aibo ERA-201B1 battery and an Ardu
 * Pin 1 = Plus (+VBat)
 * Pin 2 = SMBus Clock
 * Pin 3 = SMBus Data
-* Pin 4 = /EN has to be connected to pin 6(-VBat) to activate the Arduino
+* Pin 4 = /EN has to be connected to pin 6 (-VBat) to activate the Arduino
 * Pin 5 = Reserve (Internal temperature thermistor)
 * Pin 6 = Minus (-VBat)
 

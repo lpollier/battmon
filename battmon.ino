@@ -396,7 +396,7 @@ void DisplaySetupMenu() {
   while(1) {
     lcd.clear();
     if (select_list(&setupMenu) == -3) return; // Left arrow -> go back to main menu
-    while (wait_on_escape(25)); // Let go please
+    while (wait_on_escape(25)); // Wait for buttons to be up, may have residual press from menu
     switch (setupMenu.low.i) {
       case 0:
         TestSMBus();
@@ -423,8 +423,8 @@ void DisplaySetupMenu() {
 void DisplayReadMenu() {
   while(1) {
     lcd.clear();
-    if (select_list(&readMenu) == -3) return; // Left arrow -> go back to main
-    while (wait_on_escape(25)); // Let go please
+    if (select_list(&readMenu) == -3) return; // Left arrow -> go back to main menu
+    while (wait_on_escape(25)); // Wait for buttons to be up, may have residual press from menu
     switch (readMenu.low.i) {
       case 0:
         BatteryID();
@@ -448,7 +448,7 @@ void DisplayReadMenu() {
 void DisplayControlMenu() {
   while(1) {
     lcd.clear();
-    if (select_list(&controlMenu) == -3) return; // Left arrow -> go back to main
+    if (select_list(&controlMenu) == -3) return; // Left arrow -> go back to main menu
     while (wait_on_escape(25)); // Wait for buttons to be up, may have residual press from menu
     switch (controlMenu.low.i) {
       case 0:
@@ -549,7 +549,7 @@ void ScanSMBus() {
       lcd.print(" (0x");
       lcd.print(addr, HEX);
       lcd.write(')');
-      scroll_bar_v(cursorPos*99/foundI2C, lcd_columns - 1, 0, lcd_rows);
+      scroll_bar_v(cursorPos * 99 / foundI2C, lcd_columns - 1, 0, lcd_rows);
       while ((button_status = wait_on_escape(500)) == 0);
       switch (button_status) {
         case 1:
@@ -598,8 +598,8 @@ void EnterAddress() {
   inputBin.option = 0;
 
   switch (input_panel(&inputBin)) {
-    case -1: // Escape (back to menu)
-    case -3: // Left (at MSB, back to menu)
+    case -1: // Escape (go back to setup menu)
+    case -3: // Left (at MSB, go back to setup menu)
       return;
       break;
     case 1:
@@ -619,7 +619,7 @@ void EnterAddress() {
 void SetCommand() {
   while(1) {
     lcd.clear();
-    if (select_list(&commandMenu) == -3) return;
+    if (select_list(&commandMenu) == -3) return; // Left arrow -> go back to setup menu
     while (wait_on_escape(25)); // Wait for buttons to be up, may have residual press from menu
     if (commandMenu.low.i >= 0 && commandMenu.low.i <= (sizeof(cmdset_items) / sizeof(&cmdset_items)) - 1) {
       cmdSet = commandMenu.low.i; // Just set the selection to the new command set, looks valid
@@ -710,7 +710,7 @@ void ChargeData() {
     if (currTemp != lastTemp) {
       lastTemp = currTemp;
       lcdClearSpace(12, 1, 4);
-      lcd.print((float)currTemp/10 - 273.15, 1);
+      lcd.print((float)currTemp / 10 - 273.15, 1);
       highTemp = max(highTemp, currTemp + 10); // +/- 0.1 deg K
       lowTemp = min(lowTemp, currTemp - 10);
       lcdCharShiftLeft(4, 5);
@@ -742,7 +742,7 @@ void SingleCommand() {
   singleCmdList.high.i = cmd_getLength() - 1;
   while(1) {
     lcd.clear();
-    if (select_list(&singleCmdList) == -3) return; // left: exit
+    if (select_list(&singleCmdList) == -3) return; // Left arrow -> go back to control menu
     while (wait_on_escape(25)); // Wait for buttons to be up, may have residual press from menu
     lcd.clear();
     msg_lcd(PSTR("... Reading ... "));
@@ -757,30 +757,30 @@ void SingleCommand() {
     else return;
     switch (cmd_getType(singleCmdList.low.i)) {
       case BATT_MAH:
-        valueBuffer = (float)wordBuffer/1000;
+        valueBuffer = (float)wordBuffer / 1000;
         fmtDouble(valueBuffer, 6, i2cBuffer, bufferLen);
-        strcpy_P(i2cBuffer+strcspn(i2cBuffer, 0), PSTR(" Ah"));
+        strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR(" Ah"));
         break;
       case BATT_MA:
-        valueBuffer = (float)wordBuffer/1000;
+        valueBuffer = (float)wordBuffer / 1000;
         fmtDouble(valueBuffer, 6, i2cBuffer, bufferLen);
-        strcpy_P(i2cBuffer+strcspn(i2cBuffer, 0), PSTR(" A"));
+        strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR(" A"));
         break;
       case BATT_MV:
-        valueBuffer = (float)wordBuffer/1000;
+        valueBuffer = (float)wordBuffer / 1000;
         fmtDouble(valueBuffer, 6, i2cBuffer, bufferLen);
-        strcpy_P(i2cBuffer+strcspn(i2cBuffer, 0), PSTR(" V"));
+        strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR(" V"));
         break;
       case BATT_MINUTES:
         itoa(wordBuffer, i2cBuffer, 10);
-        strcpy_P(i2cBuffer+strcspn(i2cBuffer, 0), PSTR(" Minutes"));
+        strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR(" Minutes"));
         break;
       case BATT_PERCENT:
         itoa(wordBuffer, i2cBuffer, 10);
-        strcpy_P(i2cBuffer+strcspn(i2cBuffer, 0), PSTR(" %"));
+        strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR(" %"));
         break;
       case BATT_TENTH_K:
-        valueBuffer = (float)wordBuffer/10 - 273.15;
+        valueBuffer = (float)wordBuffer / 10 - 273.15;
         fmtDouble(valueBuffer, 6, i2cBuffer, bufferLen);
         strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR("\xDF")); // Place a '°' special character here
         strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR("C"));
@@ -796,11 +796,11 @@ void SingleCommand() {
         itoa(wordBuffer, i2cBuffer + 2, 16);
         break;
       case BATT_DATE:
-        itoa((uint8_t)wordBuffer & B00001111, i2cBuffer, 10);
-        strcpy_P(i2cBuffer + 2, PSTR("/"));
-        itoa((uint8_t)(wordBuffer >> 5) & B00001111, i2cBuffer + 3, 10);
-        strcpy_P(i2cBuffer + 5, PSTR("/"));
-        itoa((wordBuffer >> 9) + 1980, i2cBuffer + 6, 10);
+        itoa((uint8_t)wordBuffer & B00001111, i2cBuffer, 10); // Day value
+        strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR("/"));
+        itoa((uint8_t)(wordBuffer >> 5) & B00001111, i2cBuffer + strcspn(i2cBuffer, 0), 10); // Month value
+        strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR("/"));
+        itoa((wordBuffer >> 9) + 1980, i2cBuffer + strcspn(i2cBuffer, 0), 10); // Year value
         break;
     }
     lcd.clear();
@@ -850,22 +850,22 @@ void ControlWriteWord() {
         while (wait_on_escape(25)); // Wait for buttons to be up, may have residual press from menu
         serialData = strtoul(textValue, NULL, 16);
         lcdClearSpace(12, 1, 4);
-        lcd.print(serialData,HEX);
+        lcd.print(serialData, HEX);
         switch (menuSelection) {
           case 1: // Enter (confirm all, perform write)
-            i2c_smbus_write_word(serialCommand,serialData); // Write value with command (value converted from string in default above; command converted before we got here)
+            i2c_smbus_write_word(serialCommand, serialData); // Write value with command (value converted from string in default above; command converted before we got here)
             lcd.setCursor(5, 1);
             msg_lcd(PSTR("-OK-"));
             while (wait_on_escape(500) == 0); // Wait for button press
-          case -1: // Escape (return to menu)
+          case -1: // Escape (go back to control menu)
             return;
             break; // Dummy break, won't reach this
           case -3: // Left (at MSB, go back to address)
             break; // This is the only case where this is actually reached... haha
         }
         break;
-      case -3: // Left (at MSB, go back to menu since we don't want to be here)
-      case -1: // Escape (back to menu)
+      case -1: // Escape (go back to control menu)
+      case -3: // Left (at MSB, go back to control menu since we don't want to be here)
         return;
         break;
       default: // Invalid?
@@ -890,8 +890,8 @@ void ControlReadWord() {
   inputHex.option = 1; // Option 1 incluess 0-9 as valid characters
 
   switch (input_panel(&inputHex)) {
-    case -1: // Escape (back to menu)
-    case -3: // Left (at MSB, back to menu)
+    case -1: // Escape (go back to control menu)
+    case -3: // Left (at MSB, go back to control menu)
       return;
       break;
     case 1:
