@@ -18,6 +18,7 @@ void lcdCharShiftLeft(byte startIdx, byte endIdx) {
   }
   lcd.createChar(x, lcdCustomCharBuffer[x]); // Had to save this one for last
 }
+
 void lcdCharShiftRight(byte startIdx, byte endIdx) {
   byte x, y;
   for (x=startIdx; x<=endIdx; x++) {
@@ -31,10 +32,11 @@ void lcdCharShiftRight(byte startIdx, byte endIdx) {
   lcd.createChar(x, lcdCustomCharBuffer[x]);
   }
 }
+
 void lcdClearSpace(byte col, byte row, byte spaces) {
   byte x = 0;
   lcd.setCursor(col, row);
-  for (x;x<spaces; x++) lcd.write(' ');
+  for (x; x<spaces; x++) lcd.write(' ');
   lcd.setCursor(col, row);
 }
 

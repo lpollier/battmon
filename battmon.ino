@@ -129,14 +129,14 @@ int global_style = 125; // This is the style of the phi_prompt menus
 #define Cmd_SpecificationInfo      0x1A
 #define Cmd_ManufactureDate        0x1B
 #define Cmd_SerialNumber           0x1C
-// Reserved                        0x1D - 0x1F
-#define Cmd_ManufacturerName       0x1D //0x20
-#define Cmd_DeviceName             0x1E //0x21
-#define Cmd_DeviceChemistry        0x1F //0x22
-#define Cmd_ManufacturerData       0x20 //0x23
-#define Cmd_Flags                  0x21 //0x2F
-#define Cmd_EDV1                   0x22 //0x3E
-#define Cmd_EDVF                   0x23 //0x3F
+// Reserved                        Register function codes 0x1D - 0x1F
+#define Cmd_ManufacturerName       0x1D // Register function code 0x20
+#define Cmd_DeviceName             0x1E // Register function code 0x21
+#define Cmd_DeviceChemistry        0x1F // Register function code 0x22
+#define Cmd_ManufacturerData       0x20 // Register function code 0x23
+#define Cmd_Flags                  0x21 // Register function code 0x2F
+#define Cmd_EDV1                   0x22 // Register function code 0x3E
+#define Cmd_EDVF                   0x23 // Register function code 0x3F
 
 // Table of ALL global command labels used in the command sets
 const char cmdLabel_ManufacturerAccess[] PROGMEM = "ManufacturerAccess";
@@ -348,15 +348,15 @@ void setup() {
   
   lcdReinitPhi();
   // Initialize the menus only once, so they stay persistent between submenus. -- and yeah, dirty hacks are fun! Maybe I could've just "commandMenu = controlMenu", but I don't think that'll work so well. --
-  commandMenu.low.i = controlMenu.low.i = readMenu.low.i = setupMenu.low.i = singleCmdList.low.i = mainMenu.low.i = 0; // Default item highlighted on the list
-  commandMenu.width = controlMenu.width = readMenu.width = setupMenu.width = singleCmdList.width = mainMenu.width = lcd_columns - ((global_style&phi_prompt_arrow_dot) != 0) - ((global_style&phi_prompt_scroll_bar) != 0); // Auto fit the size of the list to the screen. Length in characters of the longest list item
-  commandMenu.step.c_arr[0] = controlMenu.step.c_arr[0] = readMenu.step.c_arr[0] = setupMenu.step.c_arr[0] = singleCmdList.step.c_arr[0] = mainMenu.step.c_arr[0] = lcd_rows; // Rows to auto fit entire screen
-  commandMenu.step.c_arr[1] = controlMenu.step.c_arr[1] = readMenu.step.c_arr[1] = setupMenu.step.c_arr[1] = singleCmdList.step.c_arr[1] = mainMenu.step.c_arr[1] = 1; // One col list
-  commandMenu.step.c_arr[2] = controlMenu.step.c_arr[2] = readMenu.step.c_arr[2] = setupMenu.step.c_arr[2] = singleCmdList.step.c_arr[2] = mainMenu.step.c_arr[2] = 0; // Row for current/total indicator, or 123^56 list (row 0) 
-  commandMenu.step.c_arr[3] = controlMenu.step.c_arr[3] = readMenu.step.c_arr[3] = setupMenu.step.c_arr[3] = singleCmdList.step.c_arr[3] = mainMenu.step.c_arr[3] = lcd_columns - 4 - ((global_style&phi_prompt_index_list) != 0) - ((global_style&phi_prompt_scroll_bar) != 0); // col for current/total indicator or list (scrollbar minus 4 minus one for index list)
-  commandMenu.col = controlMenu.col = readMenu.col = setupMenu.col = singleCmdList.col = mainMenu.col = 0; // Display menu at column 0
-  commandMenu.row = controlMenu.row = readMenu.row = setupMenu.row = singleCmdList.row = mainMenu.row = 0; // Display menu at row 1
-  commandMenu.option = controlMenu.option = readMenu.option = setupMenu.option = singleCmdList.option = mainMenu.option = global_style; // Option 0, display classic list, option 1, display 2X2 list, option 2, display list with index, option 3, display list with index2
+  commandMenu.low.i = mainMenu.low.i = setupMenu.low.i = readMenu.low.i = controlMenu.low.i = singleCmdList.low.i = 0; // Default item highlighted on the list
+  commandMenu.width = mainMenu.width = setupMenu.width = readMenu.width = controlMenu.width = singleCmdList.width = lcd_columns - ((global_style&phi_prompt_arrow_dot) != 0) - ((global_style&phi_prompt_scroll_bar) != 0); // Auto fit the size of the list to the screen. Length in characters of the longest list item
+  commandMenu.step.c_arr[0] = mainMenu.step.c_arr[0] = setupMenu.step.c_arr[0] = readMenu.step.c_arr[0] = controlMenu.step.c_arr[0] = singleCmdList.step.c_arr[0] = lcd_rows; // Rows to auto fit entire screen
+  commandMenu.step.c_arr[1] = mainMenu.step.c_arr[1] = setupMenu.step.c_arr[1] = readMenu.step.c_arr[1] = controlMenu.step.c_arr[1] = singleCmdList.step.c_arr[1] = 1; // One col list
+  commandMenu.step.c_arr[2] = mainMenu.step.c_arr[2] = setupMenu.step.c_arr[2] = readMenu.step.c_arr[2] = controlMenu.step.c_arr[2] = singleCmdList.step.c_arr[2] = 0; // Row for current/total indicator, or 123^56 list (row 0) 
+  commandMenu.step.c_arr[3] = mainMenu.step.c_arr[3] = setupMenu.step.c_arr[3] = readMenu.step.c_arr[3] = controlMenu.step.c_arr[3] = singleCmdList.step.c_arr[3] = lcd_columns - 4 - ((global_style&phi_prompt_index_list) != 0) - ((global_style&phi_prompt_scroll_bar) != 0); // col for current/total indicator or list (scrollbar minus 4 minus one for index list)
+  commandMenu.col = mainMenu.col = setupMenu.col = readMenu.col = controlMenu.col = singleCmdList.col = 0; // Display menu at column 0
+  commandMenu.row = mainMenu.row = setupMenu.row = readMenu.row = controlMenu.row = singleCmdList.row = 0; // Display menu at row 1
+  commandMenu.option = mainMenu.option = setupMenu.option = readMenu.option = controlMenu.option = singleCmdList.option = global_style; // Option 0, display classic list, option 1, display 2X2 list, option 2, display list with index, option 3, display list with index2
   
   mainMenu.ptr.list = (char**)&main_menu_items; // Assign the list to the pointer
   mainMenu.high.i = (sizeof(main_menu_items) / sizeof(&main_menu_items)) - 1; // Last item of the list is size of the list - 1
@@ -371,7 +371,7 @@ void setup() {
 }
 
 void loop() {
-  while(1) { // This loops every time a menu item is selected
+  while (true) { // This loops every time a menu item is selected
     lcd.clear(); // Refresh menu if a button has been pushed
     select_list(&mainMenu); // Use the select_list to ask the user to select an item of the list, that is a menu item from your menu
     while (wait_on_escape(25)); // Let go please
@@ -383,7 +383,7 @@ void loop() {
 	    DisplayReadMenu();
 	    break;
 	  case 2:
-	    DisplayControlMenu(); // Display submenu, will return here upon exiting menu
+	    DisplayControlMenu(); // Display submenu, will return here upon exiting it
 	    break;
 	  default:
 	    break;
@@ -393,7 +393,7 @@ void loop() {
 }
 
 void DisplaySetupMenu() {
-  while(1) {
+  while (true) {
     lcd.clear();
     if (select_list(&setupMenu) == -3) return; // Left arrow -> go back to main menu
     while (wait_on_escape(25)); // Wait for buttons to be up, may have residual press from menu
@@ -421,7 +421,7 @@ void DisplaySetupMenu() {
 }
 
 void DisplayReadMenu() {
-  while(1) {
+  while (true) {
     lcd.clear();
     if (select_list(&readMenu) == -3) return; // Left arrow -> go back to main menu
     while (wait_on_escape(25)); // Wait for buttons to be up, may have residual press from menu
@@ -446,7 +446,7 @@ void DisplayReadMenu() {
 }
 
 void DisplayControlMenu() {
-  while(1) {
+  while (true) {
     lcd.clear();
     if (select_list(&controlMenu) == -3) return; // Left arrow -> go back to main menu
     while (wait_on_escape(25)); // Wait for buttons to be up, may have residual press from menu
@@ -476,20 +476,22 @@ void DisplayControlMenu() {
 void TestSMBus() {
   byte x = 0;
   lcd.clear();
-  lcd.setCursor(0, 0);
   msg_lcd(PSTR("Address: "));
+  lcdPadBinary(deviceAddress, 7);
+  lcd.setCursor(0, 1);
+
   if (deviceAddress == 0) {
-    lcd.setCursor(0, 1);
     msg_lcd(PSTR("Invalid address!"));
     while (wait_on_escape(500) == 0); // Wait for button press
     while (wait_on_escape(25)); // Wait for release
+    return; // Go back to setup menu
   }
-  lcdPadBinary(deviceAddress, 7);
-  lcd.setCursor(0, 1);
+
   lcd.noCursor();
   lcd.noBlink();
   x = 0;
   msg_lcd(PSTR("... Checking ..."));
+
   while (!i2c_detect_device(deviceAddress)) {
     lcd.setCursor((x&B100)?x + 8:x, 1);
     lcd.write('.');
@@ -501,7 +503,7 @@ void TestSMBus() {
   }
   lcd.setCursor(0, 1);
   msg_lcd(PSTR("  !! Found !!   "));
-  lcd.setCursor(15, 1);
+
   while (wait_on_escape(500) == 0); // Wait for button press
   while (wait_on_escape(25)); // Wait for release
 }
@@ -511,11 +513,11 @@ void ScanSMBus() {
   byte foundI2C = 0;
   byte cursorPos = 1;
   byte scanDirection = 2; // 0: don't change, 1: reverse scan, 2: forward scan (display function)
-  byte i2cBitmap[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // Ah, data compression. ran into a bug during debugging where this wasn't actually zeroed out on startup, causing huge amounts of corruption
+  byte i2cBitmap[16] = {0};
   int button_status;
   lcd.clear();
-  lcd.setCursor(0, 0);
   msg_lcd(PSTR("Address    Found"));
+
   while (addr) {
     lcd.setCursor(0, 1);
     lcdPadBinary(addr, 7);
@@ -530,11 +532,13 @@ void ScanSMBus() {
     if (addr == 112) addr = 0;
     if (wait_on_escape(25)) return;
   }
+
   if (foundI2C == 0) {
     lcd.clear();
     ok_dialog(noDevicesFound);
     return;
   }
+
   addr = 0;
   while (true) {
     if (i2cBitmap[addr/8] & (1 << addr%8)) {
@@ -568,11 +572,11 @@ void ScanSMBus() {
           break;
         case 5:
           deviceAddress = addr;
-          strcpy(i2cBuffer, "Using: ");
+          strcpy_P(i2cBuffer, PSTR("Using:   "));
           itoa(deviceAddress, i2cBuffer + 7, 2);
           ok_dialog(i2cBuffer);
           while (wait_on_escape(25)); // Wait for release
-          return;
+          return; // Go back to control menu
           break;
         default:
           scanDirection = 0;
@@ -585,8 +589,8 @@ void ScanSMBus() {
 }
 
 void EnterAddress() {
-  lcd.clear(); // Clear the lcd
-  msg_lcd(PSTR("Enter 7 bits:   ")); // Prompt user for input
+  lcd.clear();
+  msg_lcd(PSTR("Enter address:  ")); // Prompt user for input
 
   char textAddress[8] = {char('0' + bitRead(deviceAddress, 6)), char('0' + bitRead(deviceAddress, 5)), char('0' + bitRead(deviceAddress, 4)), char('0' + bitRead(deviceAddress, 3)), char('0' + bitRead(deviceAddress, 2)), char('0' + bitRead(deviceAddress, 1)), char('0' + bitRead(deviceAddress, 0))}; // This is the buffer that will store the content of the text panel
   inputBin.ptr.msg = textAddress; // Assign the text buffer address
@@ -612,18 +616,20 @@ void EnterAddress() {
     default:
       break;
   }
-  while (wait_on_escape(25)); // Wait for buttons to be up, may have residual press from menu
+
   while (wait_on_escape(500) == 0); // Wait for button press
+  while (wait_on_escape(25)); // Wait for release
 }
 
 void SetCommand() {
-  while(1) {
+  while (true) {
     lcd.clear();
     if (select_list(&commandMenu) == -3) return; // Left arrow -> go back to setup menu
+
     while (wait_on_escape(25)); // Wait for buttons to be up, may have residual press from menu
     if (commandMenu.low.i >= 0 && commandMenu.low.i <= (sizeof(cmdset_items) / sizeof(&cmdset_items)) - 1) {
       cmdSet = commandMenu.low.i; // Just set the selection to the new command set, looks valid
-      return;
+      return; // Go back to setup menu
     }
   }
 }
@@ -633,18 +639,20 @@ void BatteryID() {
   msg_lcd(PSTR("Mfg  Device Chem"));
   lcd.setCursor(0, 1);
   msg_lcd(PSTR("... Reading ... "));
-  do {
-    i2c_smbus_read_block(cmd_getCode(Cmd_ManufacturerName), i2cBuffer, bufferLen);
-    lcdClearSpace(0, 1, 16);
-    lcd.print(i2cBuffer);
-    lcd.setCursor(5, 1);
-    i2c_smbus_read_block(cmd_getCode(Cmd_DeviceName), i2cBuffer, bufferLen);
-    lcd.print(i2cBuffer);
-    lcdClearSpace(11, 1, 1); // Place a space character between DeviceName and DeviceChemistry
-    lcd.setCursor(12, 1);
-    i2c_smbus_read_block(cmd_getCode(Cmd_DeviceChemistry), i2cBuffer, bufferLen);
-    lcd.print(i2cBuffer);
-  } while (wait_on_escape(500) == 0);
+
+  i2c_smbus_read_block(cmd_getCode(Cmd_ManufacturerName), i2cBuffer, bufferLen);
+  lcdClearSpace(0, 1, 16);
+  lcd.print(i2cBuffer);
+  lcd.setCursor(5, 1);
+  i2c_smbus_read_block(cmd_getCode(Cmd_DeviceName), i2cBuffer, bufferLen);
+  lcd.print(i2cBuffer);
+  lcdClearSpace(11, 1, 1); // Place a space character between DeviceName and DeviceChemistry
+  lcd.setCursor(12, 1);
+  i2c_smbus_read_block(cmd_getCode(Cmd_DeviceChemistry), i2cBuffer, bufferLen);
+  lcd.print(i2cBuffer);
+
+  while (wait_on_escape(500) == 0); // Wait for button press
+  while (wait_on_escape(25)); // Wait for release
 }
 
 void ChargeData() {
@@ -653,10 +661,11 @@ void ChargeData() {
   int lowVoltage, lowAmps, lowTemp, highVoltage, highAmps, highTemp;
   byte x, y;
   lcd.clear();
+
   // Initialize the custom char buffer & clear characters
   for (x=0; x<=7; x++) {
     for (y=0; y<=7; y++) lcdCustomCharBuffer[x][y] = 0;
-    lcd.createChar(x,lcdCustomCharBuffer[x]);
+    lcd.createChar(x, lcdCustomCharBuffer[x]);
   }
   lcd.setCursor(0, 0);
   msg_lcd(PSTR("V    A    % "));
@@ -670,13 +679,14 @@ void ChargeData() {
   lcd.write(4); lcd.write(5);
   lcd.setCursor(0, 1);
   msg_lcd(PSTR("... Reading ... "));
-  while (wait_on_escape(25));
+
   lowVoltage = i2c_smbus_read_word(cmd_getCode(Cmd_EDVF));
   highVoltage = i2c_smbus_read_word(cmd_getCode(Cmd_ChargingVoltage)) + 300;
   lowAmps = 32767;
   highAmps = 0;
   lowTemp = 32767;
   highTemp = 0;
+
   do {
     currVoltage = i2c_smbus_read_word(cmd_getCode(Cmd_Voltage));
     currAmps = i2c_smbus_read_word(cmd_getCode(Cmd_Current));
@@ -689,7 +699,7 @@ void ChargeData() {
       lcdCharShiftLeft(0, 1);
       y = map(currVoltage, lowVoltage, highVoltage, 8, 0);
       for (x=0; x<=7; x++) if (x >= y) bitSet(lcdCustomCharBuffer[1][x], 0);
-      lcd.createChar(1,lcdCustomCharBuffer[1]);
+      lcd.createChar(1, lcdCustomCharBuffer[1]);
     }
     if (currAmps != lastAmps) {
       lastAmps = currAmps;
@@ -700,7 +710,7 @@ void ChargeData() {
       lcdCharShiftLeft(2, 3);
       y = map(currAmps, lowAmps, highAmps, 8, 0);
       for (x=0; x<=7; x++) if (x >= y) bitSet(lcdCustomCharBuffer[3][x], 0);
-      lcd.createChar(3,lcdCustomCharBuffer[3]);
+      lcd.createChar(3, lcdCustomCharBuffer[3]);
     }
     if (estPercent != lastPercent) {
       lastPercent = estPercent;
@@ -718,21 +728,34 @@ void ChargeData() {
       for (x=0; x<=7; x++) if (x >= y) bitSet(lcdCustomCharBuffer[5][x], 0);
       lcd.createChar(5, lcdCustomCharBuffer[5]);
     }
-  } while (wait_on_escape(500) == 0);
+  } while (wait_on_escape(500) == 0); // Wait for button press
+  while (wait_on_escape(25)); // Wait for release
+
+  lcd.clear();
+  msg_lcd(PSTR("V    A    % ")); // Display charge data submenu again during the lcd object reinitialization
+  lcd.write(0xDF); // Place a '°' special character here
+  lcd.write('C');
+  lcd.setCursor(0, 1);
+  msg_lcd(PSTR("... Re init ... "));
   lcdReinitPhi();
 }
 
 void Statistics() {
+  int wordBuffer;
   lcd.clear();
-  lcd.setCursor(0, 0);
   msg_lcd(PSTR("RmgCapacity #Cyc"));
   lcd.setCursor(0, 1);
   msg_lcd(PSTR("... Reading ... "));
+
+  wordBuffer = i2c_smbus_read_word(cmd_getCode(Cmd_RemainingCapacity));
   lcdClearSpace(0, 1, 16);
-  lcd.print(i2c_smbus_read_word(cmd_getCode(Cmd_RemainingCapacity)), DEC);
+  lcd.print(wordBuffer, DEC);
   lcd.setCursor(12, 1);
-  lcd.print(i2c_smbus_read_word(cmd_getCode(Cmd_CycleCount)), DEC);
-  while (wait_on_escape(500) == 0);
+  wordBuffer = i2c_smbus_read_word(cmd_getCode(Cmd_CycleCount));
+  lcd.print(wordBuffer, DEC);
+
+  while (wait_on_escape(500) == 0); // Wait for button press
+  while (wait_on_escape(25)); // Wait for release
 }
 
 void SingleCommand() {
@@ -740,14 +763,15 @@ void SingleCommand() {
   double valueBuffer;
   singleCmdList.ptr.list = cmd_getPtr(); // Grab the currently selected command list in a pointer
   singleCmdList.high.i = cmd_getLength() - 1;
-  while(1) {
+
+  while (true) {
     lcd.clear();
     if (select_list(&singleCmdList) == -3) return; // Left arrow -> go back to control menu
-    while (wait_on_escape(25)); // Wait for buttons to be up, may have residual press from menu
     lcd.clear();
-    msg_lcd(PSTR("... Reading ... "));
-    lcd.setCursor(0, 1);
     msg_lcd(PSTR("Hung? Check con."));
+    lcd.setCursor(0, 1);
+    msg_lcd(PSTR("... Reading ... "));
+
     if (cmd_getType(singleCmdList.low.i) < BATT_STRING) {
       wordBuffer = i2c_smbus_read_word(cmd_getCode(singleCmdList.low.i));
     }
@@ -755,6 +779,7 @@ void SingleCommand() {
       i2c_smbus_read_block(cmd_getCode(singleCmdList.low.i), i2cBuffer, bufferLen);
     }
     else return;
+
     switch (cmd_getType(singleCmdList.low.i)) {
       case BATT_MAH:
         valueBuffer = (float)wordBuffer / 1000;
@@ -813,19 +838,19 @@ void SingleCommand() {
     msg_lcd(PSTR(">OK<"));
     while (wait_on_escape(500) == 0); // Wait for button press
     while (wait_on_escape(25)); // Wait for release
-    return;
+    return; // Go back to control menu
   }
 }
 
 void ControlWriteWord() {
   char textAddress[3] = "00"; // This is the buffer that will store the content of the text panel
-  char textValue[5] = "0000"; 
+  char textValue[5] = "0000";
   int menuSelection;
-
-  lcd.clear(); // Clear the lcd
+  lcd.clear();
   msg_lcd(PSTR("Addr -WRITE- Val")); // Prompt user for input
   lcd.setCursor(0, 1);
   msg_lcd(PSTR("0x..      0x0000"));
+
   // Common parameters
   inputHex.low.c = 'A'; // Text panel valid input starts with character 'A'
   inputHex.high.c = 'F'; // Text panel valid input ends with character 'F'
@@ -847,7 +872,7 @@ void ControlWriteWord() {
         inputHex.col = 12; // Display input panel at column 12 (right side of screen, at "0x____")
         while (wait_on_escape(25)); // Wait for buttons to be up, may have residual press from menu
         menuSelection = input_panel(&inputHex);
-        while (wait_on_escape(25)); // Wait for buttons to be up, may have residual press from menu
+        while (wait_on_escape(25)); // Wait for release
         serialData = strtoul(textValue, NULL, 16);
         lcdClearSpace(12, 1, 4);
         lcd.print(serialData, HEX);
@@ -855,8 +880,9 @@ void ControlWriteWord() {
           case 1: // Enter (confirm all, perform write)
             i2c_smbus_write_word(serialCommand, serialData); // Write value with command (value converted from string in default above; command converted before we got here)
             lcd.setCursor(5, 1);
-            msg_lcd(PSTR("-OK-"));
+            msg_lcd(PSTR(">OK<"));
             while (wait_on_escape(500) == 0); // Wait for button press
+            while (wait_on_escape(25)); // Wait for release
           case -1: // Escape (go back to control menu)
             return;
             break; // Dummy break, won't reach this
@@ -865,7 +891,7 @@ void ControlWriteWord() {
         }
         break;
       case -1: // Escape (go back to control menu)
-      case -3: // Left (at MSB, go back to control menu since we don't want to be here)
+      case -3: // Left (at MSB, go back to control menu)
         return;
         break;
       default: // Invalid?
@@ -875,7 +901,7 @@ void ControlWriteWord() {
 }
 
 void ControlReadWord() {
-  lcd.clear(); // Clear the lcd
+  lcd.clear();
   msg_lcd(PSTR("Addr -READ-  Val")); // Prompt user for input
   lcd.setCursor(0, 1);
   msg_lcd(PSTR("0x..      0x...."));
@@ -903,14 +929,16 @@ void ControlReadWord() {
     default:
       break;
   }
-  while (wait_on_escape(25)); // Wait for buttons to be up, may have residual press from menu
+
   while (wait_on_escape(500) == 0); // Wait for button press
+  while (wait_on_escape(25)); // Wait for release
 }
 
 void ControlReadBlock() {
   byte bytesReceived;
-  lcd.clear(); // Clear the lcd
+  lcd.clear();
   msg_lcd(PSTR("Block Read: Addr")); // Prompt user for input
+  lcd.setCursor(0, 1);
 
   char textAddress[3] = "00"; // This is the buffer that will store the content of the text panel
   inputHex.ptr.msg = textAddress; // Assign the text buffer address
@@ -923,18 +951,19 @@ void ControlReadBlock() {
 
   if (input_panel(&inputHex) == 1) { // Only one case here, we want ENTER. Everything else escapes back to menu
     serialCommand = strtoul(textAddress, NULL, 16);
-    lcd.clear();
     bytesReceived = i2c_smbus_read_block(serialCommand, i2cBuffer, bufferLen);
+    lcdClearSpace(0, 0, 16);
     msg_lcd(PSTR("Cmd "));
     lcd.print(serialCommand, HEX);
     msg_lcd(PSTR(": "));
     lcd.print(bytesReceived, DEC);
     msg_lcd(PSTR(" Bytes"));
     lcd.setCursor(0, 1);
+    lcdClearSpace(0, 1, 16);
     if (bytesReceived > 0 && bytesReceived <= 16) lcd.print(i2cBuffer); // More than 0 bytes, less than 16
     else msg_lcd(PSTR("ERR:Invalid Data"));
-    while (wait_on_escape(25)); // Wait for buttons to be up, may have residual press from menu
-    while (wait_on_escape(500) == 0); // Wait for any button to continue
   }
-  while (wait_on_escape(25)); // Wait for no button press
+
+  while (wait_on_escape(500) == 0); // Wait for button press
+  while (wait_on_escape(25)); // Wait for release
 }

@@ -1,15 +1,15 @@
 /* Format functions */
 
-unsigned fmtUnsigned(unsigned long val, char *buf, unsigned bufLen=0xffff, byte width=0);
-void fmtDouble(double val, byte precision, char *buf, unsigned bufLen=0xffff);
+unsigned fmtUnsigned(unsigned long val, char *buf, unsigned bufLen=0xFF, byte digitLen=0);
+void fmtDouble(double val, byte precision, char *buf, unsigned bufLen=0xFF);
 
 // Produce a formatted string in a buffer corresponding to the value provided.
-// If the 'width' parameter is non-zero, the value will be padded with leading
-// zeroes to achieve the specified width.  The number of characters added to
+// If the 'digitLen' parameter is non-zero, the value will be padded with leading
+// zeroes to achieve the specified length. The number of characters added to
 // the buffer (not including the null termination) is returned.
 //
-unsigned fmtUnsigned(unsigned long val, char *buf, unsigned bufLen, byte width) {
-  if (!buf || !bufLen) return(0);
+unsigned fmtUnsigned(unsigned long val, char *buf, unsigned bufLen, byte digitLen) {
+  if (!buf || !bufLen) return(-1);
 
   // Produce the digit string (backwards in the digit buffer)
   char dbuf[10];
@@ -21,7 +21,7 @@ unsigned fmtUnsigned(unsigned long val, char *buf, unsigned bufLen, byte width) 
 
   // Copy the optional leading zeroes and digits to the target buffer
   unsigned len = 0;
-  byte padding = (width > idx) ? width - idx : 0;
+  byte padding = (digitLen > idx) ? digitLen - idx : 0;
   char c = '0';
   while ((--bufLen > 0) && (idx || padding)) {
     if (padding) padding--;
@@ -35,14 +35,14 @@ unsigned fmtUnsigned(unsigned long val, char *buf, unsigned bufLen, byte width) 
   return(len);
 }
 
-// Format a floating point value with number of decimal places.
+// Format a floating point value with number of the decimal places.
 // The 'precision' parameter is a number from 0 to 6 indicating the desired decimal places.
-// The 'buf' parameter points to a buffer to receive the formatted string.  This must be
-// sufficiently large to contain the resulting string.  The buffer's length may be
-// optionally specified.  If it is given, the maximum length of the generated string
+// The 'buf' parameter points to a buffer to receive the formatted string. This must be
+// sufficiently large to contain the resulting string. The buffer's length may be
+// optionally specified. If it is given, the maximum length of the generated string
 // will be one less than the specified value.
 //
-// Example: fmtDouble(3.1415, 2, buf); // produces 3.14 (two decimal places)
+// Example: fmtDouble(3.1415, 2, buf); // Produces 3.14 (two decimal places)
 //
 void fmtDouble(double val, byte precision, char *buf, unsigned bufLen) {
   if (!buf || !bufLen) return;
@@ -63,7 +63,7 @@ void fmtDouble(double val, byte precision, char *buf, unsigned bufLen) {
     // Compute the rounding factor and fractional multiplier
     double roundingFactor = 0.5;
     unsigned long mult = 1;
-    for (byte i = 0; i < precision; i++) {
+    for (byte i=0; i<precision; i++) {
       roundingFactor /= 10.0;
       mult *= 10;
     }
@@ -84,6 +84,6 @@ void fmtDouble(double val, byte precision, char *buf, unsigned bufLen) {
     }
   }
 
-  // Null-terminate the string
-  *buf = '\0';
+  // Add the null termination
+  *buf += '\0';
 }
