@@ -1,7 +1,44 @@
 /* Format functions */
 
+void fmtBinary(uint16_t val, byte digitLen, char *buf, unsigned bufLen=0xFF);
 unsigned fmtUnsigned(unsigned long val, char *buf, unsigned bufLen=0xFF, byte digitLen=0);
 void fmtDouble(double val, byte precision, char *buf, unsigned bufLen=0xFF);
+
+// Format a binary value with number of the digits length.
+// The 'digitLen' parameter is a number from 0 to 16 indicating the desired digits length.
+// The 'buf' parameter points to a buffer to receive the formatted string. This must be
+// sufficiently large to contain the resulting string. The buffer's length may be
+// optionally specified. If it is given, the maximum length of the generated string
+// will be one less than the specified value.
+//
+// Example: fmtBinary(11, 8, buf); // Produces 00001011 (8 digits length)
+//
+void fmtBinary(uint16_t val, byte digitLen, char *buf, unsigned bufLen) {
+  if (!buf || !bufLen) return;
+  // Limit the digits length to the LCD width
+  const byte lcdWidth = 16;
+  if (digitLen > lcdWidth)
+    digitLen = lcdWidth;
+
+  if (--bufLen > 0)
+  {
+    // Reset the digit buffer
+    memset(buf, 0, lcdWidth);
+
+    // Produce the digit string (backwards in the digit buffer)
+    uint16_t mask = 1;
+    for (byte i=0; i<digitLen; i++) {
+      if ((val & mask) >= 1)
+        buf[digitLen-1-i] = '1';
+      else
+        buf[digitLen-1-i] = '0';
+      mask <<= 1;
+    }
+  }
+
+  // Add the null termination
+  *buf += '\0';
+}
 
 // Produce a formatted string in a buffer corresponding to the value provided.
 // If the 'digitLen' parameter is non-zero, the value will be padded with leading
@@ -19,7 +56,7 @@ unsigned fmtUnsigned(unsigned long val, char *buf, unsigned bufLen, byte digitLe
     if ((val /= 10) == 0) break;
   }
 
-  // Copy the optional leading zeroes and digits to the target buffer
+  // Copy the optional leading zeroes and digits to the digit buffer
   unsigned len = 0;
   byte padding = (digitLen > idx) ? digitLen - idx : 0;
   char c = '0';
@@ -71,7 +108,7 @@ void fmtDouble(double val, byte precision, char *buf, unsigned bufLen) {
       // Apply the rounding factor
       val += roundingFactor;
 
-      // Add the integral portion to the buffer
+      // Add the integral portion to the digit buffer
       unsigned len = fmtUnsigned((unsigned long)val, buf, bufLen);
       buf += len;
       bufLen -= len;

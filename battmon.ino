@@ -87,15 +87,15 @@ unsigned int serialData;
 int global_style = 125; // This is the style of the phi_prompt menus
 
 // Define battery type size variables
-#define BATT_MAH      0
-#define BATT_MA       1
-#define BATT_MV       2
-#define BATT_MINUTES  3
-#define BATT_PERCENT  4
-#define BATT_TENTH_K  5
-#define BATT_BITFIELD 6
-#define BATT_DEC      7
-#define BATT_HEX      8
+#define BATT_BITFIELD 0
+#define BATT_DEC      1
+#define BATT_HEX      2
+#define BATT_MAH      3
+#define BATT_MA       4
+#define BATT_MV       5
+#define BATT_MINUTES  6
+#define BATT_PERCENT  7
+#define BATT_TENTH_K  8
 #define BATT_DATE     9
 #define BATT_STRING   16
 
@@ -180,7 +180,7 @@ const char cmdLabel_EDVF[] PROGMEM = "EDVF";
 const char * const bq2040Labels[] PROGMEM = {cmdLabel_ManufacturerAccess, cmdLabel_RemainingCapacityAlarm, cmdLabel_RemainingTimeAlarm, cmdLabel_BatteryMode, cmdLabel_AtRate, cmdLabel_AtRateTimeToFull, cmdLabel_AtRateTimeToEmpty, cmdLabel_AtRateOK, cmdLabel_Temperature, cmdLabel_Voltage, cmdLabel_Current, cmdLabel_AverageCurrent, cmdLabel_MaxError, cmdLabel_RelativeStateOfCharge, cmdLabel_AbsoluteStateOfCharge, cmdLabel_RemainingCapacity, cmdLabel_FullChargeCapacity, cmdLabel_RunTimeToEmpty, cmdLabel_AverageTimeToEmpty, cmdLabel_AverageTimeToFull, cmdLabel_ChargingCurrent, cmdLabel_ChargingVoltage, cmdLabel_BatteryStatus, cmdLabel_CycleCount, cmdLabel_DesignCapacity, cmdLabel_DesignVoltage, cmdLabel_SpecificationInfo, cmdLabel_ManufactureDate, cmdLabel_SerialNumber, cmdLabel_ManufacturerName, cmdLabel_DeviceName, cmdLabel_DeviceChemistry, cmdLabel_ManufacturerData, cmdLabel_Flags, cmdLabel_EDV1, cmdLabel_EDVF};
 
 // Here, a two-dimension array. First byte is the command code itself (hex). Second byte is the type of result it's expected to return (all except the strings come through as words)
-const uint8_t bq2040Commands[][2] PROGMEM = {{0x00, BATT_HEX}, {0x01, BATT_MAH}, {0x02, BATT_MINUTES}, {0x03, BATT_BITFIELD}, {0x04, BATT_MA}, {0x05, BATT_MINUTES}, {0x06, BATT_MINUTES}, {0x07, BATT_HEX}, {0x08, BATT_TENTH_K}, {0x09, BATT_MV}, {0x0A, BATT_MA}, {0x0B, BATT_MA}, {0x0C, BATT_PERCENT}, {0x0D, BATT_PERCENT}, {0x0E, BATT_PERCENT}, {0x0F, BATT_MAH}, {0x10, BATT_MAH}, {0x11, BATT_MINUTES}, {0x12, BATT_MINUTES}, {0x13, BATT_MINUTES}, {0x14, BATT_MA}, {0x15, BATT_MV}, {0x16, BATT_BITFIELD}, {0x17, BATT_DEC}, {0x18, BATT_MAH}, {0x19, BATT_MV}, {0x1A, BATT_BITFIELD}, {0x1B, BATT_DATE}, {0x1C, BATT_DEC}, {0x20, BATT_STRING}, {0x21, BATT_STRING}, {0x22, BATT_STRING}, {0x23, BATT_STRING}, {0x2F, BATT_BITFIELD}, {0x3E, BATT_MV}, {0x3F, BATT_MV}};
+const uint8_t bq2040Commands[][2] PROGMEM = {{0x00, BATT_HEX}, {0x01, BATT_MAH}, {0x02, BATT_MINUTES}, {0x03, BATT_BITFIELD}, {0x04, BATT_MA}, {0x05, BATT_MINUTES}, {0x06, BATT_MINUTES}, {0x07, BATT_HEX}, {0x08, BATT_TENTH_K}, {0x09, BATT_MV}, {0x0A, BATT_MA}, {0x0B, BATT_MA}, {0x0C, BATT_PERCENT}, {0x0D, BATT_PERCENT}, {0x0E, BATT_PERCENT}, {0x0F, BATT_MAH}, {0x10, BATT_MAH}, {0x11, BATT_MINUTES}, {0x12, BATT_MINUTES}, {0x13, BATT_MINUTES}, {0x14, BATT_MA}, {0x15, BATT_MV}, {0x16, BATT_BITFIELD}, {0x17, BATT_DEC}, {0x18, BATT_MAH}, {0x19, BATT_MV}, {0x1A, BATT_HEX}, {0x1B, BATT_DATE}, {0x1C, BATT_DEC}, {0x20, BATT_STRING}, {0x21, BATT_STRING}, {0x22, BATT_STRING}, {0x23, BATT_STRING}, {0x2F, BATT_BITFIELD}, {0x3E, BATT_MV}, {0x3F, BATT_MV}};
 
 // This is what selects the command set itself. there's only one listing here, so just add a new entry (char cmdset_item01[] PROGMEM), then add that entry to the cmdset_items() list below
 const char cmdset_item00[] PROGMEM = "bq2040";
@@ -536,7 +536,8 @@ void ScanSMBus() {
   if (foundI2C == 0) {
     lcd.clear();
     ok_dialog(noDevicesFound);
-    return;
+    while (wait_on_escape(25)); // Wait for release
+    return; // Go back to setup menu
   }
 
   addr = 0;
@@ -573,10 +574,10 @@ void ScanSMBus() {
         case 5:
           deviceAddress = addr;
           strcpy_P(i2cBuffer, PSTR("Using:   "));
-          itoa(deviceAddress, i2cBuffer + 7, 2);
+          fmtBinary((uint16_t)deviceAddress, 7, i2cBuffer + strcspn(i2cBuffer, 0), bufferLen);
           ok_dialog(i2cBuffer);
           while (wait_on_escape(25)); // Wait for release
-          return; // Go back to control menu
+          return; // Go back to setup menu
           break;
         default:
           scanDirection = 0;
@@ -781,6 +782,16 @@ void SingleCommand() {
     else return;
 
     switch (cmd_getType(singleCmdList.low.i)) {
+      case BATT_BITFIELD:
+        fmtBinary((uint16_t)wordBuffer, 16, i2cBuffer, bufferLen);
+        break;
+      case BATT_DEC:
+        sprintf(i2cBuffer, "%d", wordBuffer);
+        break;
+      case BATT_HEX:
+        strcpy_P(i2cBuffer, PSTR("0x"));
+        sprintf(i2cBuffer + strcspn(i2cBuffer, 0), "%04X", wordBuffer);
+        break;
       case BATT_MAH:
         valueBuffer = (float)wordBuffer / 1000;
         fmtDouble(valueBuffer, 6, i2cBuffer, bufferLen);
@@ -797,11 +808,11 @@ void SingleCommand() {
         strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR(" V"));
         break;
       case BATT_MINUTES:
-        itoa(wordBuffer, i2cBuffer, 10);
+        sprintf(i2cBuffer, "%d", wordBuffer);
         strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR(" Minutes"));
         break;
       case BATT_PERCENT:
-        itoa(wordBuffer, i2cBuffer, 10);
+        sprintf(i2cBuffer, "%d", wordBuffer);
         strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR(" %"));
         break;
       case BATT_TENTH_K:
@@ -810,22 +821,12 @@ void SingleCommand() {
         strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR("\xDF")); // Place a '°' special character here
         strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR("C"));
         break;
-      case BATT_BITFIELD:
-        itoa(wordBuffer, i2cBuffer, 2);
-        break;
-      case BATT_DEC:
-        itoa(wordBuffer, i2cBuffer, 10);
-        break;
-      case BATT_HEX:
-        strcpy_P(i2cBuffer, PSTR("0x"));
-        itoa(wordBuffer, i2cBuffer + 2, 16);
-        break;
       case BATT_DATE:
-        itoa((uint8_t)wordBuffer & B00001111, i2cBuffer, 10); // Day value
+        sprintf(i2cBuffer, "%02d", (uint8_t)wordBuffer & B00001111); // Day value
         strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR("/"));
-        itoa((uint8_t)(wordBuffer >> 5) & B00001111, i2cBuffer + strcspn(i2cBuffer, 0), 10); // Month value
+        sprintf(i2cBuffer + strcspn(i2cBuffer, 0), "%02d", (uint8_t)(wordBuffer >> 5) & B00001111); // Month value
         strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR("/"));
-        itoa((wordBuffer >> 9) + 1980, i2cBuffer + strcspn(i2cBuffer, 0), 10); // Year value
+        sprintf(i2cBuffer + strcspn(i2cBuffer, 0), "%04d", (wordBuffer >> 9) + 1980); // Year value
         break;
     }
     lcd.clear();
@@ -834,8 +835,7 @@ void SingleCommand() {
     lcd.setCursor(0, 0);
     cmd_getLabel(singleCmdList.low.i, i2cBuffer);
     lcd.print(i2cBuffer);
-    lcd.setCursor(12, 1);
-    msg_lcd(PSTR(">OK<"));
+
     while (wait_on_escape(500) == 0); // Wait for button press
     while (wait_on_escape(25)); // Wait for release
     return; // Go back to control menu
@@ -846,7 +846,7 @@ void ControlWriteWord() {
   char textAddress[3] = "00"; // This is the buffer that will store the content of the text panel
   char textValue[5] = "0000";
   int menuSelection;
-  lcd.clear();
+  lcd.clear(); // Clear the lcd
   msg_lcd(PSTR("Addr -WRITE- Val")); // Prompt user for input
   lcd.setCursor(0, 1);
   msg_lcd(PSTR("0x..      0x0000"));
@@ -901,12 +901,13 @@ void ControlWriteWord() {
 }
 
 void ControlReadWord() {
-  lcd.clear();
+  char textAddress[3] = "00"; // This is the buffer that will store the content of the text panel
+  lcd.clear(); // Clear the lcd
   msg_lcd(PSTR("Addr -READ-  Val")); // Prompt user for input
   lcd.setCursor(0, 1);
   msg_lcd(PSTR("0x..      0x...."));
 
-  char textAddress[3] = "00"; // This is the buffer that will store the content of the text panel
+  // Common parameters
   inputHex.ptr.msg = textAddress; // Assign the text buffer address
   inputHex.low.c = 'A'; // Text panel valid input starts with character 'A'
   inputHex.high.c = 'F'; // Text panel valid input ends with character 'F'
@@ -935,12 +936,11 @@ void ControlReadWord() {
 }
 
 void ControlReadBlock() {
-  byte bytesReceived;
-  lcd.clear();
-  msg_lcd(PSTR("Block Read: Addr")); // Prompt user for input
-  lcd.setCursor(0, 1);
-
   char textAddress[3] = "00"; // This is the buffer that will store the content of the text panel
+  byte bytesReceived;
+  lcd.clear(); // Clear the lcd
+  msg_lcd(PSTR("Block Read: Addr")); // Prompt user for input
+
   inputHex.ptr.msg = textAddress; // Assign the text buffer address
   inputHex.low.c = 'A'; // Text panel valid input starts with character 'A'
   inputHex.high.c = 'F'; // Text panel valid input ends with character 'F'
@@ -949,7 +949,7 @@ void ControlReadBlock() {
   inputHex.row = 1; // Display input panel at row 1
   inputHex.option = 1; // Option 1 incluess 0-9 as valid characters. Option 0, default, option 1 include 0-9 as valid inputs
 
-  if (input_panel(&inputHex) == 1) { // Only one case here, we want ENTER. Everything else escapes back to menu
+  if (input_panel(&inputHex) == 1) { // Only one case here, we want ENTER. Everything else escapes back to control menu
     serialCommand = strtoul(textAddress, NULL, 16);
     bytesReceived = i2c_smbus_read_block(serialCommand, i2cBuffer, bufferLen);
     lcdClearSpace(0, 0, 16);
