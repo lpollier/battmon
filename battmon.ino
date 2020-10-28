@@ -86,7 +86,7 @@ uint8_t serialCommand;
 unsigned int serialData;
 int global_style = 125; // This is the style of the phi_prompt menus
 
-// Define battery type size variables
+// Define battery data type values
 #define BATT_BITFIELD 0
 #define BATT_DEC      1
 #define BATT_HEX      2
@@ -182,9 +182,11 @@ const char * const bq2040Labels[] PROGMEM = {cmdLabel_ManufacturerAccess, cmdLab
 // Here, a two-dimension array. First byte is the command code itself (hex). Second byte is the type of result it's expected to return (all except the strings come through as words)
 const uint8_t bq2040Commands[][2] PROGMEM = {{0x00, BATT_HEX}, {0x01, BATT_MAH}, {0x02, BATT_MINUTES}, {0x03, BATT_BITFIELD}, {0x04, BATT_MA}, {0x05, BATT_MINUTES}, {0x06, BATT_MINUTES}, {0x07, BATT_HEX}, {0x08, BATT_TENTH_K}, {0x09, BATT_MV}, {0x0A, BATT_MA}, {0x0B, BATT_MA}, {0x0C, BATT_PERCENT}, {0x0D, BATT_PERCENT}, {0x0E, BATT_PERCENT}, {0x0F, BATT_MAH}, {0x10, BATT_MAH}, {0x11, BATT_MINUTES}, {0x12, BATT_MINUTES}, {0x13, BATT_MINUTES}, {0x14, BATT_MA}, {0x15, BATT_MV}, {0x16, BATT_BITFIELD}, {0x17, BATT_DEC}, {0x18, BATT_MAH}, {0x19, BATT_MV}, {0x1A, BATT_HEX}, {0x1B, BATT_DATE}, {0x1C, BATT_DEC}, {0x20, BATT_STRING}, {0x21, BATT_STRING}, {0x22, BATT_STRING}, {0x23, BATT_STRING}, {0x2F, BATT_BITFIELD}, {0x3E, BATT_MV}, {0x3F, BATT_MV}};
 
-// This is what selects the command set itself. there's only one listing here, so just add a new entry (char cmdset_item01[] PROGMEM), then add that entry to the cmdset_items() list below
+// This is what selects the command set itself and the associated device address. Just add a new entry (char cmdset_item01[] PROGMEM and uint8_t cmdset_addr01 PROGMEM), then add that entry to the cmdset_items[] and cmdset_addrs[] lists below
 const char cmdset_item00[] PROGMEM = "bq2040";
 const char * const cmdset_items[] PROGMEM = {cmdset_item00};
+const uint8_t cmdset_addr00 PROGMEM = B0001011;
+const uint8_t cmdset_addrs[] PROGMEM = {cmdset_addr00};
 
 // Update each of these commands with your custom command set, just add a new "case" correlating to the cmdset_items[] position above
 uint8_t cmd_getCode(uint8_t command) {
@@ -630,6 +632,7 @@ void SetCommand() {
     while (wait_on_escape(25)); // Wait for buttons to be up, may have residual press from menu
     if (commandMenu.low.i >= 0 && commandMenu.low.i <= (sizeof(cmdset_items) / sizeof(&cmdset_items)) - 1) {
       cmdSet = commandMenu.low.i; // Just set the selection to the new command set, looks valid
+      deviceAddress = cmdset_addrs[cmdSet];
       return; // Go back to setup menu
     }
   }
