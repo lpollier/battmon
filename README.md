@@ -2,7 +2,7 @@
 
 Arduino Uno + 2x16 LCD keypad shield -> BattMon 2.0
 
-BattMon is an Arduino program that works with an Arduino Uno and a LCD keypad shield to monitor data coming from bq2040 gas gauge equipped in Lithium Ion Battery Pack such as for Aibo ERS2xx (ERA-201B1), ERS3xx (ERA-301B1) and ERS7 (ERA-7B1/ERA-7B2) series.
+BattMon is an Arduino program that works with an Arduino Uno and a LCD keypad shield to monitor data coming from bq2040 gas gauge equipped in Lithium Ion Battery Pack such as for Aibo ERS-2xx (ERA-201B1), ERS-3xx (ERA-301B1) and ERS-7 (ERA-7B1/ERA-7B2) series.
 
 ## Menus
 
@@ -63,13 +63,13 @@ You can refer to the [ERA-201B1 wiring diagram][ERA-201B1_wiring_diagram] for mo
 
 You may have to modify the keypads values in the [battmon][battmon] main file. Two sets are already available in the code for the values[] array, but if neither of the two works, you can find your own values using the [keypad_values_test][keypad_values_test] file.
 
-## Caution
+## Wiki
+
+A [wiki][wiki] page is available with images to illustrate the display of the menu and submenus.
+
+## Disclaimer
 
 Requires some electronics skills. There is no guarantee. Use this tool at your own risk.
-
-## To do
-
-Add images to illustrate menu and submenus display.
 
 ## License
 ----
@@ -86,3 +86,5 @@ MIT
 
 [battmon]: <https://github.com/lpollier/battmon/blob/master/battmon.ino>
 [keypad_values_test]: <https://github.com/lpollier/battmon/blob/master/test/keypad_values_test.ino>
+
+[wiki]: <https://github.com/lpollier/battmon/wiki>
