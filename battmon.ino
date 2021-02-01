@@ -514,24 +514,25 @@ void ScanSMBus() {
   byte addr = 1;
   byte foundI2C = 0;
   byte cursorPos = 1;
+  byte checkPos = 1;
   byte scanDirection = 2; // 0: don't change, 1: reverse scan, 2: forward scan (display function)
-  byte i2cBitmap[16] = {0};
+  byte i2cBitmap[8] = {0};
   int button_status;
   lcd.clear();
   msg_lcd(PSTR("Address    Found"));
 
-  while (addr) {
+  while ((addr > 0) && (addr < 128)) {
     lcd.setCursor(0, 1);
     lcdPadBinary(addr, 7);
     if (i2c_detect_device(addr)) {
+      i2cBitmap[foundI2C] = addr;
       foundI2C++;
-      i2cBitmap[addr/8] |= 1 << (addr%8);
     }
     lcd.setCursor(11, 1);
     lcd.print(foundI2C, DEC);
     addr++;
     // Reserved addresses
-    if (addr == 112) addr = 0;
+    if (addr == 120) addr = 0;
     if (wait_on_escape(25)) return;
   }
 
@@ -541,53 +542,48 @@ void ScanSMBus() {
     while (wait_on_escape(25)); // Wait for release
     return; // Go back to setup menu
   }
+  if (foundI2C > 8) foundI2C = 8;
 
-  addr = 0;
   while (true) {
-    if (i2cBitmap[addr/8] & (1 << addr%8)) {
-      lcd.clear();
-      msg_lcd(PSTR("Select ("));
-      lcd.print(cursorPos, DEC);
-      lcd.write('/');
-      lcd.print(foundI2C, DEC);
-      lcd.write(')');
-      lcd.setCursor(0, 1);
-      lcdPadBinary(addr, 7);
-      lcd.print(" (0x");
-      lcd.print(addr, HEX);
-      lcd.write(')');
-      scroll_bar_v(cursorPos * 99 / foundI2C, lcd_columns - 1, 0, lcd_rows);
-      while ((button_status = wait_on_escape(500)) == 0);
-      switch (button_status) {
-        case 1:
-          scanDirection = 1;
-          if (!--cursorPos) {
-            cursorPos = foundI2C;
-            addr = 112;
-          }
-          break;
-        case 2:
-          scanDirection = 2;
-          if (++cursorPos > foundI2C) {
-            cursorPos = 0;
-            addr = 0;
-          }
-          break;
-        case 5:
-          deviceAddress = addr;
-          strcpy_P(i2cBuffer, PSTR("Using:   "));
-          fmtBinary((uint16_t)deviceAddress, 7, i2cBuffer + strcspn(i2cBuffer, 0), bufferLen);
-          ok_dialog(i2cBuffer);
-          while (wait_on_escape(25)); // Wait for release
-          return; // Go back to setup menu
-          break;
-        default:
+    lcd.clear();
+    msg_lcd(PSTR("Select     "));
+    lcd.write(0x7E); // Place a '➔' special character here
+    lcd.print(cursorPos, DEC);
+    lcd.write('/');
+    lcd.print(foundI2C, DEC);
+    lcd.setCursor(0, 1);
+    lcdPadBinary(i2cBitmap[cursorPos-1], 7);
+    lcd.setCursor(11, 1);
+    msg_lcd(PSTR(">OK<"));
+    checkPos = cursorPos;
+    scroll_bar_v(cursorPos * 99 / foundI2C, lcd_columns - 1, 0, lcd_rows);
+    while ((button_status = wait_on_escape(500)) == 0);
+    switch (button_status) {
+      case 1:
+        if ((--checkPos < 1) || (--checkPos > foundI2C)) {
+          cursorPos = 1;
           scanDirection = 0;
-          break;
-      }
+        }
+        else scanDirection = 1;
+        break;
+      case 2:
+        if ((++checkPos < 1) || (++checkPos > foundI2C)) {
+          cursorPos = foundI2C;
+          scanDirection = 0;
+        }
+        else scanDirection = 2;
+        break;
+      case 5:
+        deviceAddress = i2cBitmap[cursorPos-1];
+        while (wait_on_escape(25)); // Wait for release
+        return; // Go back to setup menu
+        break;
+      default:
+        scanDirection = 0;
+        break;
     }
-    if (scanDirection == 1) addr--;
-    else if (scanDirection == 2) addr++;
+    if (scanDirection == 1) cursorPos--;
+    else if (scanDirection == 2) cursorPos++;
   }
 }
 
