@@ -1,28 +1,28 @@
 /*****************************************************************************
 
   Arduino Uno + 2x16 LCD keypad shield -> BattMon 2.0
-  
+
   I2C/SMBus interface to read Smart Battery data with Arduino Uno and LCD keypad shield
   Monitors data from bq2040 gas gauge equipped in Lithium Ion Battery Pack such as for Aibo ERS2xx (ERA-201B1), ERS3xx (ERA-301B1) and ERS7 (ERA-7B1/ERA-7B2) series
   Last update: 2020-11-12 released version 2.0.3
-  
+
   Made with Arduino Uno R3
-  
+
   Arduino analog input 4 - I2C SDA
   Arduino analog input 5 - I2C SCL
-  
+
   Arduino Uno pinout:
   https://content.arduino.cc/assets/Pinout-UNOrev3_latest.png
-  
+
   Arduino 1602 LCD KeyPad Shield specification:
   https://wiki.dfrobot.com/LCD_KeyPad_Shield_For_Arduino_SKU__DFR0009
-  
+
   Read the bq2040 information via 2-Wire SMBus interface:
   https://www.ti.com/lit/gpn/bq2040
-  
+
   Based on "SMBusBattery_Phi - BattMon 1.0" code initiated by FalconFour:
   https://forum.arduino.cc/index.php?topic=62955.0
-  
+
   Depends on this internal library:
   https://github.com/CainZ/LiquidCrystal
   Depends on these external libraries:
@@ -314,7 +314,7 @@ const byte lcdStartupLogo_4[8][8] PROGMEM = {
 void setup() {
   i2c_init();
   PORTC = (1 << PORTC4) | (1 << PORTC5); // Enable pullups
-  
+
   byte x, y, n;
   lcd.begin(lcd_columns, lcd_rows);
   lcd.clear();
@@ -347,19 +347,19 @@ void setup() {
     delay(20);
   }
   delay(500);
-  
+
   lcdReinitPhi();
   // Initialize the menus only once, so they stay persistent between submenus. -- and yeah, dirty hacks are fun! Maybe I could've just "commandMenu = controlMenu", but I don't think that'll work so well. --
   commandMenu.low.i = mainMenu.low.i = setupMenu.low.i = readMenu.low.i = controlMenu.low.i = singleCmdList.low.i = 0; // Default item highlighted on the list
   commandMenu.width = mainMenu.width = setupMenu.width = readMenu.width = controlMenu.width = singleCmdList.width = lcd_columns - ((global_style&phi_prompt_arrow_dot) != 0) - ((global_style&phi_prompt_scroll_bar) != 0); // Auto fit the size of the list to the screen. Length in characters of the longest list item
   commandMenu.step.c_arr[0] = mainMenu.step.c_arr[0] = setupMenu.step.c_arr[0] = readMenu.step.c_arr[0] = controlMenu.step.c_arr[0] = singleCmdList.step.c_arr[0] = lcd_rows; // Rows to auto fit entire screen
   commandMenu.step.c_arr[1] = mainMenu.step.c_arr[1] = setupMenu.step.c_arr[1] = readMenu.step.c_arr[1] = controlMenu.step.c_arr[1] = singleCmdList.step.c_arr[1] = 1; // One col list
-  commandMenu.step.c_arr[2] = mainMenu.step.c_arr[2] = setupMenu.step.c_arr[2] = readMenu.step.c_arr[2] = controlMenu.step.c_arr[2] = singleCmdList.step.c_arr[2] = 0; // Row for current/total indicator, or 123^56 list (row 0) 
+  commandMenu.step.c_arr[2] = mainMenu.step.c_arr[2] = setupMenu.step.c_arr[2] = readMenu.step.c_arr[2] = controlMenu.step.c_arr[2] = singleCmdList.step.c_arr[2] = 0; // Row for current/total indicator, or 123^56 list (row 0)
   commandMenu.step.c_arr[3] = mainMenu.step.c_arr[3] = setupMenu.step.c_arr[3] = readMenu.step.c_arr[3] = controlMenu.step.c_arr[3] = singleCmdList.step.c_arr[3] = lcd_columns - 4 - ((global_style&phi_prompt_index_list) != 0) - ((global_style&phi_prompt_scroll_bar) != 0); // col for current/total indicator or list (scrollbar minus 4 minus one for index list)
   commandMenu.col = mainMenu.col = setupMenu.col = readMenu.col = controlMenu.col = singleCmdList.col = 0; // Display menu at column 0
   commandMenu.row = mainMenu.row = setupMenu.row = readMenu.row = controlMenu.row = singleCmdList.row = 0; // Display menu at row 1
   commandMenu.option = mainMenu.option = setupMenu.option = readMenu.option = controlMenu.option = singleCmdList.option = global_style; // Option 0, display classic list, option 1, display 2X2 list, option 2, display list with index, option 3, display list with index2
-  
+
   mainMenu.ptr.list = (char**)&main_menu_items; // Assign the list to the pointer
   mainMenu.high.i = (sizeof(main_menu_items) / sizeof(&main_menu_items)) - 1; // Last item of the list is size of the list - 1
   setupMenu.ptr.list = (char**)&setup_menu_items;
@@ -378,17 +378,17 @@ void loop() {
     select_list(&mainMenu); // Use the select_list to ask the user to select an item of the list, that is a menu item from your menu
     while (wait_on_escape(25)); // Let go please
     switch (mainMenu.low.i) {
-	  case 0:
-	    DisplaySetupMenu();
-	    break;
-	  case 1:
-	    DisplayReadMenu();
-	    break;
-	  case 2:
-	    DisplayControlMenu(); // Display submenu, will return here upon exiting it
-	    break;
-	  default:
-	    break;
+      case 0:
+        DisplaySetupMenu();
+        break;
+      case 1:
+        DisplayReadMenu();
+        break;
+      case 2:
+        DisplayControlMenu(); // Display submenu, will return here upon exiting it
+        break;
+      default:
+        break;
     }
     delay(500);
   }
@@ -501,7 +501,7 @@ void TestSMBus() {
     x &= B111; // Keep it under 8
     lcd.setCursor((x&B100)?x + 8:x, 1);
     lcd.write('>');
-    if (wait_on_escape(250)) return;
+    if (wait_on_escape(25)) return;
   }
   lcd.setCursor(0, 1);
   msg_lcd(PSTR("  !! Found !!   "));
@@ -601,16 +601,16 @@ void EnterAddress() {
   inputBin.option = 0;
 
   switch (input_panel(&inputBin)) {
-    case -1: // Escape (go back to setup menu)
-    case -3: // Left (at MSB, go back to setup menu)
-      return;
-      break;
     case 1:
       deviceAddress = strtoul(textAddress, NULL, 2);
       lcdClearSpace(0, 1, 7);
       lcdPadBinary(deviceAddress, 7);
       lcd.setCursor(12, 1);
       msg_lcd(PSTR(">OK<"));
+      break;
+    case -1: // Escape (go back to setup menu)
+    case -3: // Left (at MSB, go back to setup menu)
+      return;
       break;
     default:
       break;
@@ -884,9 +884,9 @@ void ControlWriteWord() {
             while (wait_on_escape(25)); // Wait for release
           case -1: // Escape (go back to control menu)
             return;
-            break; // Dummy break, won't reach this
+            break;
           case -3: // Left (at MSB, go back to address)
-            break; // This is the only case where this is actually reached... haha
+            break;
         }
         break;
       case -1: // Escape (go back to control menu)
@@ -916,15 +916,15 @@ void ControlReadWord() {
   inputHex.option = 1; // Option 1 incluess 0-9 as valid characters
 
   switch (input_panel(&inputHex)) {
-    case -1: // Escape (go back to control menu)
-    case -3: // Left (at MSB, go back to control menu)
-      return;
-      break;
     case 1:
       serialCommand = strtoul(textAddress, NULL, 16);
       serialData = i2c_smbus_read_word(serialCommand);
       lcdClearSpace(12, 1, 4);
       lcd.print(serialData, HEX);
+      break;
+    case -1: // Escape (go back to control menu)
+    case -3: // Left (at MSB, go back to control menu)
+      return;
       break;
     default:
       break;
