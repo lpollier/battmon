@@ -2,7 +2,7 @@
 
 Arduino Uno + 2x16 LCD keypad shield -> BattMon 2.0
 
-BattMon is an Arduino program that works with an Arduino Uno and a LCD keypad shield to monitor data coming from bq2040 gas gauge equipped in Lithium Ion Battery Pack such as for Aibo ERS-2xx (ERA-201B1), ERS-3xx (ERA-301B1) and ERS-7 (ERA-7B1/ERA-7B2) series.
+BattMon is an Arduino program that works with an Arduino Uno and a LCD keypad shield to monitor data coming from bq2040 gas gauge equipped in Lithium-Ion Battery Pack such as for Aibo ERS-2xx (ERA-201B1), ERS-3xx (ERA-301B1) and ERS-7 (ERA-7B1/ERA-7B2) series.
 
 ## Menus
 
@@ -36,7 +36,7 @@ This program requires the LiquidCrystal internal library and the following exter
 | phi_prompt | [libraries/phi_prompt.zip][phi_prompt] |
 | phi_interfaces | [libraries/phi_interfaces.zip][phi_interfaces] |
 | phi_buttons | [libraries/phi_buttons.zip][phi_buttons] |
-| phi_interfaces | [libraries/phi_keypads.zip][phi_keypads] |
+| phi_keypads | [libraries/phi_keypads.zip][phi_keypads] |
 | i2cmaster | [libraries/i2cmaster.zip][i2cmaster] |
 
 ## Connection
@@ -54,6 +54,8 @@ The Arduino is powered by the battery when pin 4 (/EN) is connected to pin 6 (-V
 
 You can refer to the [ERA-201B1 wiring diagram][ERA-201B1_wiring_diagram] for more details.
 
+For those who are interested, I offer a proposal for an electronic [reverse engineering schematic][ERA-201B1_reverse_engineering_schematic] of the PCB inside the ERA-201B1 battery pack.
+
 ## Documentation
 
 * [Arduino Uno R3 schematic](https://content.arduino.cc/assets/UNO-TH_Rev3e_sch.pdf)
@@ -69,7 +71,7 @@ A [wiki][wiki] page is available with images to illustrate the display of the me
 
 ## Disclaimer
 
-Requires some electronics skills. There is no guarantee. Use this tool at your own risk.
+Requires some electronics skills. There is no guarantee. Use this tool and associated data at your own risk.
 
 ## License
 ----
@@ -82,7 +84,8 @@ MIT
 [phi_keypads]: <https://github.com/lpollier/battmon/blob/master/libraries/phi_keypads.zip>
 [phi_prompt]: <https://github.com/lpollier/battmon/blob/master/libraries/phi_prompt.zip>
 
-[ERA-201B1_wiring_diagram]: <https://github.com/lpollier/battmon/blob/master/connection/ERA-201B1_wiring_diagram.png>
+[ERA-201B1_wiring_diagram]: <https://github.com/lpollier/battmon/blob/master/example/ERA-201B1_wiring_diagram.png>
+[ERA-201B1_reverse_engineering_schematic]: <https://github.com/lpollier/battmon/blob/master/example/ERA-201B1_reverse_engineering_schematic.pdf>
 
 [battmon]: <https://github.com/lpollier/battmon/blob/master/battmon.ino>
 [keypad_values_test]: <https://github.com/lpollier/battmon/blob/master/test/keypad_values_test.ino>
