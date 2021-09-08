@@ -1,10 +1,10 @@
 # BattMon 2.0
 
-Arduino Uno + 2x16 LCD keypad shield -> BattMon 2.0
+Monitors the charge specifications of your battery equipped with the bq2040 gas gauge.
 
-BattMon is an Arduino program that works with an Arduino Uno and a LCD keypad shield to monitor data coming from bq2040 gas gauge equipped in Lithium-Ion Battery Pack such as for Aibo ERS-2xx (ERA-201B1), ERS-3xx (ERA-301B1) and ERS-7 (ERA-7B1/ERA-7B2) series.
+BattMon 2.0 is a program that works with an Arduino Uno and a 2x16 LCD keypad shield to access parameters from a bq2040 gas gauge such as Voltage, Current, Temperature, State of charge, Remaining capacity or Cycle count. This fuel gauge and other TI products like the bq2060, have been included in Lithium-Ion battery pack, especially for the Sony Aibo ERS-2xx (ERA-201B1), ERS-3xx (ERA-301B1) and ERS-7 (ERA-7B1/ERA-7B2) robot series.
 
-## Menus
+## Menu tree
 
 ```sh
 Main menu
@@ -13,23 +13,23 @@ Main menu
 │   ├── Scan SMBus
 │   ├── Enter address
 │   ├── Set command
-│   ├── Main menu
+│   └── Main menu
 ├── Read info
 │   ├── Battery ID
 │   ├── Charge data
 │   ├── Statistics
-│   ├── Main menu
-├── Control
+│   └── Main menu
+└── Control
     ├── Single command
     ├── Write word
     ├── Read word
     ├── Read block
-    ├── Main menu
+    └── Main menu
 ```
 
 ## Libraries
 
-This program requires the LiquidCrystal internal library and the following external libraries to import on Arduino IDE:
+The program needs for its operation the internal LiquidCrystal library and the following external libraries which must be imported into your Arduino IDE:
 
 | Name | Link |
 | ------ | ------ |
@@ -41,16 +41,16 @@ This program requires the LiquidCrystal internal library and the following exter
 
 ## Connection
 
-Here is one connection example between a Sony Aibo ERA-201B1 battery and an Arduino Uno + 2x16 LCD keypad shield. The pin closest to the edge is 1 and the one at the opposite is 6:
+Here is an example of connection between a Sony Aibo ERA-201B1 battery pack and the assembly of the Arduino Uno + 2x16 LCD keypad shield. The pin closest to the edge is 1 and the one opposite is 6:
 
-* Pin 1 = Plus (+VBat)
+* Pin 1 = Plus (Pack+)
 * Pin 2 = SMBus Clock
 * Pin 3 = SMBus Data
-* Pin 4 = /EN has to be connected to pin 6 (-VBat) to activate the Arduino
+* Pin 4 = /EN has to be connected to pin 6 (Pack-) to activate the Arduino Uno
 * Pin 5 = Reserve (Internal temperature thermistor)
-* Pin 6 = Minus (-VBat)
+* Pin 6 = Minus (Pack-)
 
-The Arduino is powered by the battery when pin 4 (/EN) is connected to pin 6 (-VBat) using a switch for example.
+The Arduino Uno is powered by the battery when pin 4 (/EN) is connected to pin 6 (Pack-), using a switch for example.
 
 You can refer to the [ERA-201B1 wiring diagram][ERA-201B1_wiring_diagram] for more details.
 
@@ -71,7 +71,7 @@ A [wiki][wiki] page is available with images to illustrate the display of the me
 
 ## Disclaimer
 
-Requires some electronics skills. There is no guarantee. Use this tool and associated data at your own risk.
+It requires electronics skills. There is no guarantee. Use this tool and associated data at your own risk.
 
 ## License
 ----
