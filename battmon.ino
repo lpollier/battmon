@@ -1,24 +1,22 @@
 /*****************************************************************************
 
-  Arduino Uno + 2x16 LCD keypad shield -> BattMon 2.0
+  BattMon 2.0: Made with Arduino Uno + 2x16 LCD keypad shield
 
-  I2C/SMBus interface to read Smart Battery data with Arduino Uno and LCD keypad shield
-  Monitors data from bq2040 gas gauge equipped in Lithium-Ion Battery Pack such as for Aibo ERS2xx (ERA-201B1), ERS3xx (ERA-301B1) and ERS7 (ERA-7B1/ERA-7B2) series
+  I2C/SMBus interface to read Smart Battery Data with an Arduino Uno and a 2x16 LCD keypad shield
+  Monitors data from bq2040 gas gauge equipped in Lithium-Ion battery pack such as for Sony Aibo ERS-2xx (ERA-201B1), ERS-3xx (ERA-301B1) and ERS-7 (ERA-7B1/ERA-7B2) robot series
   Last update: 2021-09-08 released version 2.0.5
-
-  Made with Arduino Uno R3
 
   Arduino analog input 4 - I2C SDA
   Arduino analog input 5 - I2C SCL
 
-  Arduino Uno pinout:
+  Arduino Uno R3 pinout:
   https://content.arduino.cc/assets/Pinout-UNOrev3_latest.png
 
-  Arduino 1602 LCD KeyPad Shield specification:
+  LCD KeyPad Shield specification:
   https://wiki.dfrobot.com/LCD_KeyPad_Shield_For_Arduino_SKU__DFR0009
 
-  Read the bq2040 information via 2-Wire SMBus interface:
-  https://www.ti.com/lit/gpn/bq2040
+  bq2040 gas gauge datasheet:
+  https://www.ti.com/lit/ds/symlink/bq2040.pdf
 
   Based on "SMBusBattery_Phi - BattMon 1.0" code initiated by FalconFour:
   https://forum.arduino.cc/index.php?topic=62955.0
