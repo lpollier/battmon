@@ -4,7 +4,7 @@
 
   I2C/SMBus interface to read Smart Battery Data with an Arduino Uno and a 2x16 LCD keypad shield
   Monitors data from bq2040 gas gauge equipped in Lithium-Ion battery pack such as for Sony Aibo ERS-2xx (ERA-201B1), ERS-3xx (ERA-301B1) and ERS-7 (ERA-7B1/ERA-7B2) robot series
-  Last update: 2021-09-08 released version 2.0.5
+  Last update: 2022-02-27 released version 2.0.6
 
   Arduino analog input 4 - I2C SDA
   Arduino analog input 5 - I2C SCL
