@@ -679,10 +679,12 @@ void ChargeData() {
   msg_lcd(PSTR("... Reading ... "));
 
   lowVoltage = i2c_smbus_read_word(cmd_getCode(Cmd_EDVF));
-  highVoltage = i2c_smbus_read_word(cmd_getCode(Cmd_ChargingVoltage)) + 300;
-  lowAmps = 32767;
+  lowVoltage = lastVoltage = abs(lowVoltage);
+  highVoltage = i2c_smbus_read_word(cmd_getCode(Cmd_ChargingVoltage));
+  lowAmps = lastAmps = 32767;
   highAmps = 0;
-  lowTemp = 32767;
+  lastPercent = 0;
+  lowTemp = lastTemp = 32767;
   highTemp = 0;
 
   do {
@@ -690,10 +692,10 @@ void ChargeData() {
     currAmps = i2c_smbus_read_word(cmd_getCode(Cmd_Current));
     estPercent = i2c_smbus_read_word(cmd_getCode(Cmd_RelativeStateOfCharge));
     currTemp = i2c_smbus_read_word(cmd_getCode(Cmd_Temperature));
-    if (currVoltage != lastVoltage) {
+    if (currVoltage != lastVoltage && currVoltage >= (lowVoltage / 3)) {
       lastVoltage = currVoltage;
       lcdClearSpace(0, 1, 5);
-      lcd.print((float)currVoltage / 1000, 1);
+      lcd.print((float)currVoltage / 1000, 2);
       lcdCharShiftLeft(0, 1);
       y = map(currVoltage, lowVoltage, highVoltage, 8, 0);
       for (x=0; x<=7; x++) if (x >= y) bitSet(lcdCustomCharBuffer[1][x], 0);
