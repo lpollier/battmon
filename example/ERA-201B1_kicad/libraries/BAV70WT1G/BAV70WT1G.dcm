@@ -1,0 +1,8 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP BAV70WT1G
+D ON Semiconductor BAV70WT1G, Dual Switching Diode Common Cathode, 200 mA 100 V, SOT−323
+F https://www.onsemi.com/pdf/datasheet/bav70wt1-d.pdf
+$ENDCMP
+#
+#End Doc Library

@@ -1,0 +1,8 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP TLV70433DBVR
+D Texas Instruments TLV70433DBVR, 24 V Input Voltage, 3.3 V 150 mA Output, Ultra-Low-Iq Low-Dropout (LDO) Regulator, SOT-23-5
+F https://www.ti.com/lit/ds/symlink/tlv704.pdf
+$ENDCMP
+#
+#End Doc Library

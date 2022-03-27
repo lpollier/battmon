@@ -1,0 +1,32 @@
+EESchema-LIBRARY Version 2.4
+#encoding utf-8
+#
+# MUN5113T1G
+#
+DEF MUN5113T1G Q 0 30 Y Y 1 F N
+F0 "Q" 300 50 50 H V L CNN
+F1 "MUN5113T1G" 300 -50 50 H V L CNN
+F2 "SOT65P220X100-3N" 300 -150 50 H I L CNN
+F3 "https://www.onsemi.com/pdf/datasheet/dta144e-d.pdf" 300 350 50 H I L CNN
+F4 "Bipolar Pre-Biased PNP Transistor, 100 mA 50 V, SOT-323" 300 150 50 H I L CNN "Description"
+F5 "ON Semiconductor" 300 250 50 H I L CNN "Manufacturer_Name"
+DRAW
+C 0 0 10 1 1 0 F
+C 150 0 111 1 1 10 N
+C 200 -120 10 1 1 0 F
+S -100 20 -40 -20 1 1 0 N
+S -20 -90 20 -30 1 1 0 N
+P 2 1 1 0 0 -30 0 0 N
+P 2 1 1 0 120 0 -40 0 N
+P 2 1 1 0 125 25 200 100 N
+P 2 1 1 20 125 60 125 -60 N
+P 3 1 1 0 0 -90 0 -120 200 -120 N
+P 3 1 1 0 125 -25 200 -100 200 -100 N
+P 5 1 1 0 190 -70 170 -90 150 -50 190 -70 190 -70 F
+X B 1 -200 0 100 R 50 50 1 1 I
+X E 2 200 -200 100 U 50 50 1 1 P
+X C 3 200 200 100 D 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
+#End Library

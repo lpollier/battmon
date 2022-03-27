@@ -1,0 +1,8 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP SI4884BDY-T1-E3
+D Vishay SI4884BDY-T1-E3, N-channel MOSFET Transistor, 12.4 A 30 V, 8-Pin SOIC
+F https://www.vishay.com/docs/73454/73454.pdf
+$ENDCMP
+#
+#End Doc Library

@@ -1,0 +1,8 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP MUN5113T1G
+D ON Semiconductor MUN5113T1G, Bipolar Pre-Biased PNP Transistor, 100 mA 50 V, SOT-323
+F https://www.onsemi.com/pdf/datasheet/dta144e-d.pdf
+$ENDCMP
+#
+#End Doc Library

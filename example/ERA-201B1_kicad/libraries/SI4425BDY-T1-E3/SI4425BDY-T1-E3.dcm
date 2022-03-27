@@ -1,0 +1,8 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP SI4425BDY-T1-E3
+D Vishay SI4425BDY-T1-E3, P-channel MOSFET Transistor, 8.8 A 30 V, 8-Pin SOIC
+F https://www.vishay.com/docs/72000/72000.pdf
+$ENDCMP
+#
+#End Doc Library

@@ -1,0 +1,27 @@
+EESchema-LIBRARY Version 2.4
+#encoding utf-8
+#
+# BAV70WT1G
+#
+DEF BAV70WT1G D 0 30 Y Y 1 F N
+F0 "D" 500 50 50 H V L CNN
+F1 "BAV70WT1G" 500 -50 50 H V L CNN
+F2 "SOT65P220X100-3N" 500 -150 50 H I L CNN
+F3 "https://www.onsemi.com/pdf/datasheet/bav70wt1-d.pdf" 500 350 50 H I L CNN
+F4 "Bipolar Pre-Biased PNP Transistor, 100 mA 50 V, SOT-323" 500 150 50 H I L CNN "Description"
+F5 "ON Semiconductor" 500 250 50 H I L CNN "Manufacturer_Name"
+DRAW
+C 0 0 10 1 1 0 F
+P 2 1 1 0 -150 0 150 0 N
+P 2 1 1 0 0 0 0 -100 N
+P 3 1 1 10 -50 -50 -50 50 -50 50 N
+P 3 1 1 10 50 -50 50 50 50 50 N
+P 6 1 1 10 -150 50 -50 0 -150 -50 -150 50 -150 50 -150 50 N
+P 6 1 1 10 150 -50 50 0 150 50 150 -50 150 -50 150 -50 N
+X A 1 -200 0 50 R 50 50 1 1 P
+X A 2 200 0 50 L 50 50 1 1 P
+X K 3 0 -200 100 U 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
+#End Library

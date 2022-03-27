@@ -1,0 +1,8 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP BQ2040SN-C408
+D Texas Instruments BQ2040SN-C408, Gas Gauge IC With SMBus Interface, 16-Pin SOIC
+F https://www.ti.com/lit/ds/symlink/bq2040.pdf
+$ENDCMP
+#
+#End Doc Library

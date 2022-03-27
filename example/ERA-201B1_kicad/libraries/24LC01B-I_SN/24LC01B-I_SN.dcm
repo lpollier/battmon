@@ -1,0 +1,8 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP 24LC01B-I_SN
+D Microchip 24LC01B-I_SN, Serial EEPROM Memory, 1kbit, 900ns, 2.5-5.5 V, 8-Pin SOIC
+F https://ww1.microchip.com/downloads/en/devicedoc/21711c.pdf
+$ENDCMP
+#
+#End Doc Library

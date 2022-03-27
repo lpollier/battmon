@@ -1,0 +1,34 @@
+EESchema-LIBRARY Version 2.4
+#encoding utf-8
+#
+# SSM3K315T
+#
+DEF SSM3K315T Q 0 30 Y Y 1 F N
+F0 "Q" 225 50 50 H V L CNN
+F1 "SSM3K315T" 225 -50 50 H V L CNN
+F2 "SOTFL95P240X88-3N" 225 -150 50 H I L CNN
+F3 "https://cdn.datasheetspdf.com/pdf-down/S/S/M/SSM3K315T_ToshibaSemiconductor.pdf" 225 350 50 H I L CNN
+F4 "N-channel MOSFET Transistor, High Speed Switching Applications, 6 A 30 V, SOT-23F-3" 225 150 50 H I L CNN "Description"
+F5 "Toshiba" 225 250 50 H I L CNN "Manufacturer_Name"
+DRAW
+C 65 0 110 1 1 10 N
+C 100 -70 10 1 1 0 F
+C 100 70 10 1 1 0 F
+P 2 1 1 0 10 0 -100 0 N
+P 2 1 1 10 10 75 10 -75 N
+P 2 1 1 10 30 -50 30 -90 N
+P 2 1 1 10 30 20 30 -20 N
+P 2 1 1 10 30 90 30 50 N
+P 2 1 1 0 100 100 100 70 N
+P 2 1 1 0 115 15 145 15 N
+P 3 1 1 0 100 -100 100 0 30 0 N
+P 4 1 1 0 30 -70 130 -70 130 70 30 70 N
+P 4 1 1 0 40 0 80 15 80 -15 40 0 F
+P 4 1 1 0 130 15 115 -10 145 -10 130 15 N
+X G 1 -200 0 100 R 50 50 1 1 I
+X S 2 100 -200 100 U 50 50 1 1 P
+X D 3 100 200 100 D 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
+#End Library

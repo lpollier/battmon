@@ -1,0 +1,8 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP SSM3K315T
+D Toshiba SSM3K315T, N-channel MOSFET Transistor, High Speed Switching Applications, 6 A 30 V, SOT-23F-3
+F https://cdn.datasheetspdf.com/pdf-down/S/S/M/SSM3K315T_ToshibaSemiconductor.pdf
+$ENDCMP
+#
+#End Doc Library
