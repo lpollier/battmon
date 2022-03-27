@@ -2,7 +2,7 @@
 
 Monitors the charge specifications of your battery equipped with the bq2040 gas gauge.
 
-BattMon 2.0 is a tool kit that works with an Arduino Uno and a 2x16 LCD keypad shield to access parameters from a bq2040 gas gauge such as Voltage, Current, State of charge, Temperature, Remaining capacity or Cycle count. This fuel gauge and other TI products like the bq2060, have been included in Lithium-Ion battery pack, especially for the Sony Aibo ERS-2xx (ERA-201B1), ERS-3xx (ERA-301B1) and ERS-7 (ERA-7B1/ERA-7B2) robot series.
+BattMon 2.0 is a toolkit that works with an Arduino Uno and a 2x16 LCD keypad shield to access parameters from a bq2040 gas gauge such as Voltage, Current, State of charge, Temperature, Remaining capacity or Cycle count. This fuel gauge and other TI products like the bq2060, have been included in Lithium-Ion battery pack, especially for the Sony Aibo ERS-2xx (ERA-201B1), ERS-3xx (ERA-301B1) and ERS-7 (ERA-7B1/ERA-7B2) robot series.
 
 ## Menu tree
 
@@ -29,7 +29,7 @@ Main menu
 
 ## Libraries
 
-The program needs for its operation the internal LiquidCrystal library and the following external libraries which must be imported into your Arduino IDE:
+The program needs for its operation the internal LiquidCrystal library and the following external libraries which must be imported into your Arduino IDE (1.8.+):
 
 | Name | Link |
 | ------ | ------ |
@@ -39,7 +39,7 @@ The program needs for its operation the internal LiquidCrystal library and the f
 | phi_keypads | [libraries/phi_keypads.zip][phi_keypads] |
 | i2cmaster | [libraries/i2cmaster.zip][i2cmaster] |
 
-Go to Sketch > Include Library > Add .Zip Library and add them one by one. The LiquidCrystal library is already included. More help with this on [instructable][instructables].
+Go to Sketch > Include Library > Add .Zip Library and add them one by one. The LiquidCrystal library is already included. More help with this on [instructables][instructables].
 
 Remember to place the [format][format], [i2c][i2c] and [lcd][lcd] dependency files in the same directory as [battmon][battmon] main file so that it can be compiled.
 
@@ -47,7 +47,7 @@ Remember to place the [format][format], [i2c][i2c] and [lcd][lcd] dependency fil
 
 Here is an example of connection between a Sony Aibo ERA-201B1 battery pack and the assembly of the Arduino Uno + 2x16 LCD keypad shield. The pin closest to the edge is 1 and the one opposite is 6:
 
-![ERA-201B1 battery pack connection with BattMon 2.0 tool kit](https://raw.githubusercontent.com/lpollier/battmon/master/example/ERA-201B1_wiring_diagram.png)
+![ERA-201B1 battery pack connection with BattMon 2.0 toolkit](https://raw.githubusercontent.com/lpollier/battmon/master/example/ERA-201B1_wiring_diagram.png)
 
 * Pin 1 = Plus (Pack+)
 * Pin 2 = SMBus Clock
@@ -75,7 +75,7 @@ You may have to modify the keypads values in the [battmon][battmon] file. Two se
 
 ## Wiki
 
-A [wiki][wiki] page is available with images to illustrate the display of the BattMon 2.0 tool kit menu and submenus.
+A [wiki][wiki] page is available with images to illustrate the display of the BattMon 2.0 toolkit menu and submenus.
 
 ## Disclaimer
 
