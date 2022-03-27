@@ -22,7 +22,7 @@
   https://forum.arduino.cc/index.php?topic=62955.0
 
   Depends on this internal library:
-  https://github.com/CainZ/LiquidCrystal
+  https://www.arduino.cc/en/Reference/LiquidCrystal
   Depends on these external libraries:
   https://github.com/liudr/phi_prompt
   https://github.com/liudr/phi_interfaces
@@ -31,11 +31,12 @@
 
 *****************************************************************************/
 
-#include <phi_prompt.h> // Import the phi_prompt lib
-#include <phi_interfaces.h> // Import the phi_interfaces lib
-#include <phi_buttons.h> // Import the phi_buttons lib
-#include <LiquidCrystal.h> // Import the LiquidCrystal lib
-#include <i2cmaster.h> // Import the i2cmaster lib
+// Import all libraries
+#include <phi_prompt.h>
+#include <phi_interfaces.h>
+#include <phi_buttons.h>
+#include <LiquidCrystal.h>
+#include <i2cmaster.h>
 
 // Define LCD digit sizing
 #define lcd_rows    2
@@ -50,7 +51,7 @@
 #define LCD_D7      7
 
 byte deviceAddress = B0001011; // bq2040 i2c device address, most battery controllers seem to use this
-byte cmdSet = 0; // Default command set (bq2040), seems to have good luck
+byte cmdSet = 0; // Default command set (bq2040)
 
 // Set the pins used on the LCD panel
 LiquidCrystal lcd(LCD_RS, LCD_EN, LCD_D4, LCD_D5, LCD_D6, LCD_D7); // Create the lcd object
@@ -68,9 +69,9 @@ char mapping[] = {'R', 'U', 'D', 'L', 'S'}; // This is a list of names for each 
 byte pins[] = {0}; // Corresponds to A0 analog to digital input
 //int values[] = {0, 130, 300, 480, 720}; // Keypad values for "DFROBOT" LCD keypad shield
 int values[] = {0, 100, 250, 400, 650}; // Keypad values for unbranded LCD keypad shield copy
-phi_analog_keypads my_btns(mapping, pins, values, 1, 5); // buttons_per_row is 1; buttons_per_column is 5
+phi_analog_keypads my_btns(mapping, pins, values, 1, 5); // buttons_per_row is 1, buttons_per_column is 5
 
-// This serial keypad is for debugging.
+// This serial keypad is for debugging
 phi_serial_keypads debug_keypad(&Serial, 9600);
 
 // The following adds all available keypads as inputs for phi_prompt library
@@ -347,16 +348,16 @@ void setup() {
   delay(500);
 
   lcdReinitPhi();
-  // Initialize the menus only once, so they stay persistent between submenus. -- and yeah, dirty hacks are fun! Maybe I could've just "commandMenu = controlMenu", but I don't think that'll work so well. --
+  // Initialize the menus only once, so they stay persistent between submenus
   commandMenu.low.i = mainMenu.low.i = setupMenu.low.i = readMenu.low.i = controlMenu.low.i = singleCmdList.low.i = 0; // Default item highlighted on the list
   commandMenu.width = mainMenu.width = setupMenu.width = readMenu.width = controlMenu.width = singleCmdList.width = lcd_columns - ((global_style&phi_prompt_arrow_dot) != 0) - ((global_style&phi_prompt_scroll_bar) != 0); // Auto fit the size of the list to the screen. Length in characters of the longest list item
   commandMenu.step.c_arr[0] = mainMenu.step.c_arr[0] = setupMenu.step.c_arr[0] = readMenu.step.c_arr[0] = controlMenu.step.c_arr[0] = singleCmdList.step.c_arr[0] = lcd_rows; // Rows to auto fit entire screen
   commandMenu.step.c_arr[1] = mainMenu.step.c_arr[1] = setupMenu.step.c_arr[1] = readMenu.step.c_arr[1] = controlMenu.step.c_arr[1] = singleCmdList.step.c_arr[1] = 1; // One col list
   commandMenu.step.c_arr[2] = mainMenu.step.c_arr[2] = setupMenu.step.c_arr[2] = readMenu.step.c_arr[2] = controlMenu.step.c_arr[2] = singleCmdList.step.c_arr[2] = 0; // Row for current/total indicator, or 123^56 list (row 0)
-  commandMenu.step.c_arr[3] = mainMenu.step.c_arr[3] = setupMenu.step.c_arr[3] = readMenu.step.c_arr[3] = controlMenu.step.c_arr[3] = singleCmdList.step.c_arr[3] = lcd_columns - 4 - ((global_style&phi_prompt_index_list) != 0) - ((global_style&phi_prompt_scroll_bar) != 0); // col for current/total indicator or list (scrollbar minus 4 minus one for index list)
+  commandMenu.step.c_arr[3] = mainMenu.step.c_arr[3] = setupMenu.step.c_arr[3] = readMenu.step.c_arr[3] = controlMenu.step.c_arr[3] = singleCmdList.step.c_arr[3] = lcd_columns - 4 - ((global_style&phi_prompt_index_list) != 0) - ((global_style&phi_prompt_scroll_bar) != 0); // Col for current/total indicator or list (scrollbar minus 4 minus one for index list)
   commandMenu.col = mainMenu.col = setupMenu.col = readMenu.col = controlMenu.col = singleCmdList.col = 0; // Display menu at column 0
   commandMenu.row = mainMenu.row = setupMenu.row = readMenu.row = controlMenu.row = singleCmdList.row = 0; // Display menu at row 1
-  commandMenu.option = mainMenu.option = setupMenu.option = readMenu.option = controlMenu.option = singleCmdList.option = global_style; // Option 0, display classic list, option 1, display 2X2 list, option 2, display list with index, option 3, display list with index2
+  commandMenu.option = mainMenu.option = setupMenu.option = readMenu.option = controlMenu.option = singleCmdList.option = global_style; // Option 0 display classic list, option 1 display 2x2 list, option 2 display list with index, option 3 display list with index2
 
   mainMenu.ptr.list = (char**)&main_menu_items; // Assign the list to the pointer
   mainMenu.high.i = (sizeof(main_menu_items) / sizeof(&main_menu_items)) - 1; // Last item of the list is size of the list - 1
@@ -866,7 +867,7 @@ void ControlWriteWord() {
         serialCommand = strtoul(textAddress, NULL, 16);
         lcdClearSpace(2, 1, 2);
         lcd.print(serialCommand, HEX);
-        inputHex.ptr.msg = textValue; // Assign the text buffer address
+        inputHex.ptr.msg = textValue; // Assign the text buffer value
         inputHex.width = 4; // Length of the input panel is 4 characters
         inputHex.col = 12; // Display input panel at column 12 (right side of screen, at "0x____")
         while (wait_on_escape(25)); // Wait for buttons to be up, may have residual press from menu
@@ -877,7 +878,7 @@ void ControlWriteWord() {
         lcd.print(serialData, HEX);
         switch (menuSelection) {
           case 1: // Enter (confirm all, perform write)
-            i2c_smbus_write_word(serialCommand, serialData); // Write value with command (value converted from string in default above; command converted before we got here)
+            i2c_smbus_write_word(serialCommand, serialData); // Write value with command (value converted from string in default above, command converted before we got here)
             lcd.setCursor(5, 1);
             msg_lcd(PSTR(">OK<"));
             while (wait_on_escape(500) == 0); // Wait for button press
@@ -960,7 +961,7 @@ void ControlReadBlock() {
     lcd.setCursor(0, 1);
     lcdClearSpace(0, 1, 16);
     if (bytesReceived > 0 && bytesReceived <= 16) lcd.print(i2cBuffer); // More than 0 bytes, less than 16
-    else msg_lcd(PSTR("ERR:Invalid Data"));
+    else msg_lcd(PSTR("ERR:Invalid data"));
   }
 
   while (wait_on_escape(500) == 0); // Wait for button press
