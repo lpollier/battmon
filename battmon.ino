@@ -337,15 +337,15 @@ void setup() {
     delay(400);
     for (x=0; x<=7; x++) for (y=0; y<=7; y++) lcdCustomCharBuffer[x][y] = pgm_read_byte(&lcdStartupLogo_4[x][y]);
     for (x=0; x<=7; x++) lcd.createChar(x, lcdCustomCharBuffer[x]);
-    delay(400);
+    delay(600);
   }
-  delay(600);
+  delay(200);
   for (x=0; x<=20; x++) {
     lcdCharShiftRight(0, 3);
     lcdCharShiftRight(4, 7);
     delay(20);
   }
-  delay(500);
+  delay(200);
 
   lcdReinitPhi();
   // Initialize the menus only once, so they stay persistent between submenus
@@ -637,18 +637,20 @@ void BatteryID() {
   lcd.clear();
   msg_lcd(PSTR("Mfg  Device Chem"));
   lcd.setCursor(0, 1);
-  msg_lcd(PSTR("... Reading ... "));
+  msg_lcd(PSTR("...Connecting..."));
 
-  i2c_smbus_read_block(cmd_getCode(Cmd_ManufacturerName), i2cBuffer, bufferLen);
-  lcdClearSpace(0, 1, 16);
-  lcd.print(i2cBuffer);
-  lcd.setCursor(5, 1);
-  i2c_smbus_read_block(cmd_getCode(Cmd_DeviceName), i2cBuffer, bufferLen);
-  lcd.print(i2cBuffer);
-  lcdClearSpace(11, 1, 1); // Place a space character between DeviceName and DeviceChemistry
-  lcd.setCursor(12, 1);
-  i2c_smbus_read_block(cmd_getCode(Cmd_DeviceChemistry), i2cBuffer, bufferLen);
-  lcd.print(i2cBuffer);
+  if (i2c_detect_device(deviceAddress)) {
+    i2c_smbus_read_block(cmd_getCode(Cmd_ManufacturerName), i2cBuffer, bufferLen);
+    lcdClearSpace(0, 1, 16);
+    lcd.print(i2cBuffer);
+    lcd.setCursor(5, 1);
+    i2c_smbus_read_block(cmd_getCode(Cmd_DeviceName), i2cBuffer, bufferLen);
+    lcd.print(i2cBuffer);
+    lcdClearSpace(11, 1, 1); // Place a space character between DeviceName and DeviceChemistry
+    lcd.setCursor(12, 1);
+    i2c_smbus_read_block(cmd_getCode(Cmd_DeviceChemistry), i2cBuffer, bufferLen);
+    lcd.print(i2cBuffer);
+  }
 
   while (wait_on_escape(500) == 0); // Wait for button press
   while (wait_on_escape(25)); // Wait for release
@@ -677,67 +679,79 @@ void ChargeData() {
   lcd.setCursor(14, 0);
   lcd.write(4); lcd.write(5);
   lcd.setCursor(0, 1);
-  msg_lcd(PSTR("... Reading ... "));
+  msg_lcd(PSTR("...Connecting..."));
 
-  lowVoltage = i2c_smbus_read_word(cmd_getCode(Cmd_EDVF));
-  lowVoltage = lastVoltage = abs(lowVoltage);
-  highVoltage = i2c_smbus_read_word(cmd_getCode(Cmd_ChargingVoltage));
-  lowAmps = lastAmps = 32767;
-  highAmps = 0;
-  lastPercent = 0;
-  lowTemp = lastTemp = 32767;
-  highTemp = 0;
+  if (i2c_detect_device(deviceAddress)) {
+    lowVoltage = i2c_smbus_read_word(cmd_getCode(Cmd_EDVF));
+    lowVoltage = lastVoltage = abs(lowVoltage);
+    highVoltage = i2c_smbus_read_word(cmd_getCode(Cmd_ChargingVoltage));
+    lowAmps = lastAmps = 32767;
+    highAmps = 0;
+    lastPercent = 0;
+    lowTemp = lastTemp = 32767;
+    highTemp = 0;
 
-  do {
-    currVoltage = i2c_smbus_read_word(cmd_getCode(Cmd_Voltage));
-    currAmps = i2c_smbus_read_word(cmd_getCode(Cmd_Current));
-    estPercent = i2c_smbus_read_word(cmd_getCode(Cmd_RelativeStateOfCharge));
-    currTemp = i2c_smbus_read_word(cmd_getCode(Cmd_Temperature));
-    if (currVoltage != lastVoltage && currVoltage >= (lowVoltage / 3)) {
-      lastVoltage = currVoltage;
-      lcdClearSpace(0, 1, 5);
-      lcd.print((float)currVoltage / 1000, 2);
-      lcdCharShiftLeft(0, 1);
-      y = map(currVoltage, lowVoltage, highVoltage, 8, 0);
-      for (x=0; x<=7; x++) if (x >= y) bitSet(lcdCustomCharBuffer[1][x], 0);
-      lcd.createChar(1, lcdCustomCharBuffer[1]);
-    }
-    if (currAmps != lastAmps) {
-      lastAmps = currAmps;
-      lcdClearSpace(5, 1, 4);
-      lcd.print((float)currAmps / 1000, 1);
-      highAmps = max(highAmps, currAmps + 100); // +/- 0.1 Amps
-      lowAmps = min(lowAmps, currAmps - 100);
-      lcdCharShiftLeft(2, 3);
-      y = map(currAmps, lowAmps, highAmps, 8, 0);
-      for (x=0; x<=7; x++) if (x >= y) bitSet(lcdCustomCharBuffer[3][x], 0);
-      lcd.createChar(3, lcdCustomCharBuffer[3]);
-    }
-    if (estPercent != lastPercent) {
-      lastPercent = estPercent;
-      lcdClearSpace(9, 1, 3);
-      lcd.print(estPercent, DEC);
-    }
-    if (currTemp != lastTemp) {
-      lastTemp = currTemp;
-      lcdClearSpace(12, 1, 4);
-      lcd.print((float)currTemp / 10 - 273.15, 1);
-      highTemp = max(highTemp, currTemp + 10); // +/- 0.1 deg K
-      lowTemp = min(lowTemp, currTemp - 10);
-      lcdCharShiftLeft(4, 5);
-      y = map(currTemp, lowTemp, highTemp, 8, 0);
-      for (x=0; x<=7; x++) if (x >= y) bitSet(lcdCustomCharBuffer[5][x], 0);
-      lcd.createChar(5, lcdCustomCharBuffer[5]);
-    }
-  } while (wait_on_escape(500) == 0); // Wait for button press
-  while (wait_on_escape(25)); // Wait for release
+    do {
+      currVoltage = i2c_smbus_read_word(cmd_getCode(Cmd_Voltage));
+      currAmps = i2c_smbus_read_word(cmd_getCode(Cmd_Current));
+      estPercent = i2c_smbus_read_word(cmd_getCode(Cmd_RelativeStateOfCharge));
+      currTemp = i2c_smbus_read_word(cmd_getCode(Cmd_Temperature));
+      if (currVoltage != lastVoltage && currVoltage >= (lowVoltage / 2)) {
+        lastVoltage = currVoltage;
+        lcdClearSpace(0, 1, 5);
+        lcd.print((float)currVoltage / 1000, 2);
+        lcdCharShiftLeft(0, 1);
+        y = map(currVoltage, lowVoltage, highVoltage, 8, 0);
+        for (x=0; x<=7; x++) if (x >= y) bitSet(lcdCustomCharBuffer[1][x], 0);
+        lcd.createChar(1, lcdCustomCharBuffer[1]);
+      }
+      if (currAmps != lastAmps) {
+        lastAmps = currAmps;
+        lcdClearSpace(5, 1, 4);
+        lcd.print((float)currAmps / 1000, 1);
+        highAmps = max(highAmps, currAmps + 100); // +/- 0.1 Amps
+        lowAmps = min(lowAmps, currAmps - 100);
+        lcdCharShiftLeft(2, 3);
+        y = map(currAmps, lowAmps, highAmps, 8, 0);
+        for (x=0; x<=7; x++) if (x >= y) bitSet(lcdCustomCharBuffer[3][x], 0);
+        lcd.createChar(3, lcdCustomCharBuffer[3]);
+      }
+      if (estPercent != lastPercent) {
+        lastPercent = estPercent;
+        lcdClearSpace(9, 1, 3);
+        lcd.print(estPercent, DEC);
+      }
+      if (currTemp != lastTemp) {
+        lastTemp = currTemp;
+        lcdClearSpace(12, 1, 4);
+        lcd.print((float)currTemp / 10 - 273.15, 1);
+        highTemp = max(highTemp, currTemp + 10); // +/- 0.1 deg K
+        lowTemp = min(lowTemp, currTemp - 10);
+        lcdCharShiftLeft(4, 5);
+        y = map(currTemp, lowTemp, highTemp, 8, 0);
+        for (x=0; x<=7; x++) if (x >= y) bitSet(lcdCustomCharBuffer[5][x], 0);
+        lcd.createChar(5, lcdCustomCharBuffer[5]);
+      }
+      delay(200);
+      if (!i2c_detect_device(deviceAddress)) {
+        while (wait_on_escape(500) == 0); // Wait for button press
+        while (wait_on_escape(25)); // Wait for release
+        return; // Go back to read menu
+      }
+    } while (wait_on_escape(500) == 0); // Wait for button press
+    while (wait_on_escape(25)); // Wait for release
+  }
+  else {
+    while (wait_on_escape(500) == 0); // Wait for button press
+    while (wait_on_escape(25)); // Wait for release
+  }
 
   lcd.clear();
   msg_lcd(PSTR("V    A    % ")); // Display charge data submenu again during the lcd object reinitialization
   lcd.write(0xDF); // Place a '°' special character here
   lcd.write('C');
   lcd.setCursor(0, 1);
-  msg_lcd(PSTR("... Re init ... "));
+  msg_lcd(PSTR(".Reinitializing."));
   lcdReinitPhi();
 }
 
@@ -746,14 +760,16 @@ void Statistics() {
   lcd.clear();
   msg_lcd(PSTR("RmgCapacity #Cyc"));
   lcd.setCursor(0, 1);
-  msg_lcd(PSTR("... Reading ... "));
+  msg_lcd(PSTR("...Connecting..."));
 
-  wordBuffer = i2c_smbus_read_word(cmd_getCode(Cmd_RemainingCapacity));
-  lcdClearSpace(0, 1, 16);
-  lcd.print(wordBuffer, DEC);
-  lcd.setCursor(12, 1);
-  wordBuffer = i2c_smbus_read_word(cmd_getCode(Cmd_CycleCount));
-  lcd.print(wordBuffer, DEC);
+  if (i2c_detect_device(deviceAddress)) {
+    wordBuffer = i2c_smbus_read_word(cmd_getCode(Cmd_RemainingCapacity));
+    lcdClearSpace(0, 1, 16);
+    lcd.print(wordBuffer, DEC);
+    lcd.setCursor(12, 1);
+    wordBuffer = i2c_smbus_read_word(cmd_getCode(Cmd_CycleCount));
+    lcd.print(wordBuffer, DEC);
+  }
 
   while (wait_on_escape(500) == 0); // Wait for button press
   while (wait_on_escape(25)); // Wait for release
@@ -771,70 +787,72 @@ void SingleCommand() {
     lcd.clear();
     msg_lcd(PSTR("Hung? Check con."));
     lcd.setCursor(0, 1);
-    msg_lcd(PSTR("... Reading ... "));
+    msg_lcd(PSTR("...Connecting..."));
 
-    if (cmd_getType(singleCmdList.low.i) < BATT_STRING) {
-      wordBuffer = i2c_smbus_read_word(cmd_getCode(singleCmdList.low.i));
-    }
-    else if (cmd_getType(singleCmdList.low.i) == BATT_STRING) {
-      i2c_smbus_read_block(cmd_getCode(singleCmdList.low.i), i2cBuffer, bufferLen);
-    }
-    else return;
+    if (i2c_detect_device(deviceAddress)) {
+      if (cmd_getType(singleCmdList.low.i) < BATT_STRING) {
+        wordBuffer = i2c_smbus_read_word(cmd_getCode(singleCmdList.low.i));
+      }
+      else if (cmd_getType(singleCmdList.low.i) == BATT_STRING) {
+        i2c_smbus_read_block(cmd_getCode(singleCmdList.low.i), i2cBuffer, bufferLen);
+      }
+      else return;
 
-    switch (cmd_getType(singleCmdList.low.i)) {
-      case BATT_BITFIELD:
-        fmtBinary((uint16_t)wordBuffer, 16, i2cBuffer, bufferLen);
-        break;
-      case BATT_DEC:
-        sprintf(i2cBuffer, "%d", wordBuffer);
-        break;
-      case BATT_HEX:
-        strcpy_P(i2cBuffer, PSTR("0x"));
-        sprintf(i2cBuffer + strcspn(i2cBuffer, 0), "%04X", wordBuffer);
-        break;
-      case BATT_MAH:
-        valueBuffer = (float)wordBuffer / 1000;
-        fmtDouble(valueBuffer, 6, i2cBuffer, bufferLen);
-        strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR(" Ah"));
-        break;
-      case BATT_MA:
-        valueBuffer = (float)wordBuffer / 1000;
-        fmtDouble(valueBuffer, 6, i2cBuffer, bufferLen);
-        strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR(" A"));
-        break;
-      case BATT_MV:
-        valueBuffer = (float)wordBuffer / 1000;
-        fmtDouble(valueBuffer, 6, i2cBuffer, bufferLen);
-        strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR(" V"));
-        break;
-      case BATT_MINUTES:
-        sprintf(i2cBuffer, "%d", wordBuffer);
-        strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR(" Minutes"));
-        break;
-      case BATT_PERCENT:
-        sprintf(i2cBuffer, "%d", wordBuffer);
-        strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR(" %"));
-        break;
-      case BATT_TENTH_K:
-        valueBuffer = (float)wordBuffer / 10 - 273.15;
-        fmtDouble(valueBuffer, 6, i2cBuffer, bufferLen);
-        strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR("\xDF")); // Place a '°' special character here
-        strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR("C"));
-        break;
-      case BATT_DATE:
-        sprintf(i2cBuffer, "%02d", (uint8_t)wordBuffer & B00001111); // Day value
-        strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR("/"));
-        sprintf(i2cBuffer + strcspn(i2cBuffer, 0), "%02d", (uint8_t)(wordBuffer >> 5) & B00001111); // Month value
-        strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR("/"));
-        sprintf(i2cBuffer + strcspn(i2cBuffer, 0), "%04d", (wordBuffer >> 9) + 1980); // Year value
-        break;
+      switch (cmd_getType(singleCmdList.low.i)) {
+        case BATT_BITFIELD:
+          fmtBinary((uint16_t)wordBuffer, 16, i2cBuffer, bufferLen);
+          break;
+        case BATT_DEC:
+          sprintf(i2cBuffer, "%d", wordBuffer);
+          break;
+        case BATT_HEX:
+          strcpy_P(i2cBuffer, PSTR("0x"));
+          sprintf(i2cBuffer + strcspn(i2cBuffer, 0), "%04X", wordBuffer);
+          break;
+        case BATT_MAH:
+          valueBuffer = (float)wordBuffer / 1000;
+          fmtDouble(valueBuffer, 6, i2cBuffer, bufferLen);
+          strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR(" Ah"));
+          break;
+        case BATT_MA:
+          valueBuffer = (float)wordBuffer / 1000;
+          fmtDouble(valueBuffer, 6, i2cBuffer, bufferLen);
+          strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR(" A"));
+          break;
+        case BATT_MV:
+          valueBuffer = (float)wordBuffer / 1000;
+          fmtDouble(valueBuffer, 6, i2cBuffer, bufferLen);
+          strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR(" V"));
+          break;
+        case BATT_MINUTES:
+          sprintf(i2cBuffer, "%d", wordBuffer);
+          strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR(" Minutes"));
+          break;
+        case BATT_PERCENT:
+          sprintf(i2cBuffer, "%d", wordBuffer);
+          strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR(" %"));
+          break;
+        case BATT_TENTH_K:
+          valueBuffer = (float)wordBuffer / 10 - 273.15;
+          fmtDouble(valueBuffer, 6, i2cBuffer, bufferLen);
+          strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR("\xDF")); // Place a '°' special character here
+          strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR("C"));
+          break;
+        case BATT_DATE:
+          sprintf(i2cBuffer, "%02d", (uint8_t)wordBuffer & B00001111); // Day value
+          strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR("/"));
+          sprintf(i2cBuffer + strcspn(i2cBuffer, 0), "%02d", (uint8_t)(wordBuffer >> 5) & B00001111); // Month value
+          strcpy_P(i2cBuffer + strcspn(i2cBuffer, 0), PSTR("/"));
+          sprintf(i2cBuffer + strcspn(i2cBuffer, 0), "%04d", (wordBuffer >> 9) + 1980); // Year value
+          break;
+      }
+      lcd.clear();
+      lcd.setCursor(0, 1);
+      lcd.print(i2cBuffer);
+      lcd.setCursor(0, 0);
+      cmd_getLabel(singleCmdList.low.i, i2cBuffer);
+      lcd.print(i2cBuffer);
     }
-    lcd.clear();
-    lcd.setCursor(0, 1);
-    lcd.print(i2cBuffer);
-    lcd.setCursor(0, 0);
-    cmd_getLabel(singleCmdList.low.i, i2cBuffer);
-    lcd.print(i2cBuffer);
 
     while (wait_on_escape(500) == 0); // Wait for button press
     while (wait_on_escape(25)); // Wait for release
@@ -849,54 +867,63 @@ void ControlWriteWord() {
   lcd.clear(); // Clear the lcd
   msg_lcd(PSTR("Addr -WRITE- Val")); // Prompt user for input
   lcd.setCursor(0, 1);
-  msg_lcd(PSTR("0x..      0x0000"));
+  msg_lcd(PSTR("...Connecting..."));
 
-  // Common parameters
-  inputHex.low.c = 'A'; // Text panel valid input starts with character 'A'
-  inputHex.high.c = 'F'; // Text panel valid input ends with character 'F'
-  inputHex.row = 1; // Display input panel at row 1
-  inputHex.option = 1; // Option 1 incluess 0-9 as valid characters
+  if (i2c_detect_device(deviceAddress)) {
+    lcd.setCursor(0, 1);
+    msg_lcd(PSTR("0x..      0x0000"));
 
-  while (true) { // This way we can go back and forth, come back to it when we loop back from value field
-    inputHex.ptr.msg = textAddress; // Assign the text buffer address
-    inputHex.width = 2; // Length of the input panel is 2 characters
-    inputHex.col = 2; // Display input panel at column 2 (at "0x__")
-    switch (input_panel(&inputHex)) {
-      case -4: // Right (at LSB, go right to the value)
-      case 1: // Enter (confirm address, go to the value)
-        serialCommand = strtoul(textAddress, NULL, 16);
-        lcdClearSpace(2, 1, 2);
-        lcd.print(serialCommand, HEX);
-        inputHex.ptr.msg = textValue; // Assign the text buffer value
-        inputHex.width = 4; // Length of the input panel is 4 characters
-        inputHex.col = 12; // Display input panel at column 12 (right side of screen, at "0x____")
-        while (wait_on_escape(25)); // Wait for buttons to be up, may have residual press from menu
-        menuSelection = input_panel(&inputHex);
-        while (wait_on_escape(25)); // Wait for release
-        serialData = strtoul(textValue, NULL, 16);
-        lcdClearSpace(12, 1, 4);
-        lcd.print(serialData, HEX);
-        switch (menuSelection) {
-          case 1: // Enter (confirm all, perform write)
-            i2c_smbus_write_word(serialCommand, serialData); // Write value with command (value converted from string in default above, command converted before we got here)
-            lcd.setCursor(5, 1);
-            msg_lcd(PSTR(">OK<"));
-            while (wait_on_escape(500) == 0); // Wait for button press
-            while (wait_on_escape(25)); // Wait for release
-          case -1: // Escape (go back to control menu)
-            return;
-            break;
-          case -3: // Left (at MSB, go back to address)
-            break;
-        }
-        break;
-      case -1: // Escape (go back to control menu)
-      case -3: // Left (at MSB, go back to control menu)
-        return;
-        break;
-      default: // Invalid?
-        break;
+    // Common parameters
+    inputHex.low.c = 'A'; // Text panel valid input starts with character 'A'
+    inputHex.high.c = 'F'; // Text panel valid input ends with character 'F'
+    inputHex.row = 1; // Display input panel at row 1
+    inputHex.option = 1; // Option 1 incluess 0-9 as valid characters
+
+    while (true) { // This way we can go back and forth, come back to it when we loop back from value field
+      inputHex.ptr.msg = textAddress; // Assign the text buffer address
+      inputHex.width = 2; // Length of the input panel is 2 characters
+      inputHex.col = 2; // Display input panel at column 2 (at "0x__")
+      switch (input_panel(&inputHex)) {
+        case -4: // Right (at LSB, go right to the value)
+        case 1: // Enter (confirm address, go to the value)
+          serialCommand = strtoul(textAddress, NULL, 16);
+          lcdClearSpace(2, 1, 2);
+          lcd.print(serialCommand, HEX);
+          inputHex.ptr.msg = textValue; // Assign the text buffer value
+          inputHex.width = 4; // Length of the input panel is 4 characters
+          inputHex.col = 12; // Display input panel at column 12 (right side of screen, at "0x____")
+          while (wait_on_escape(25)); // Wait for buttons to be up, may have residual press from menu
+          menuSelection = input_panel(&inputHex);
+          while (wait_on_escape(25)); // Wait for release
+          serialData = strtoul(textValue, NULL, 16);
+          lcdClearSpace(12, 1, 4);
+          lcd.print(serialData, HEX);
+          switch (menuSelection) {
+            case 1: // Enter (confirm all, perform write)
+              i2c_smbus_write_word(serialCommand, serialData); // Write value with command (value converted from string in default above, command converted before we got here)
+              lcd.setCursor(5, 1);
+              msg_lcd(PSTR(">OK<"));
+              while (wait_on_escape(500) == 0); // Wait for button press
+              while (wait_on_escape(25)); // Wait for release
+            case -1: // Escape (go back to control menu)
+              return;
+              break;
+            case -3: // Left (at MSB, go back to address)
+              break;
+          }
+          break;
+        case -1: // Escape (go back to control menu)
+        case -3: // Left (at MSB, go back to control menu)
+          return;
+          break;
+        default: // Invalid
+          break;
+      }
     }
+  }
+  else {
+    while (wait_on_escape(500) == 0); // Wait for button press
+    while (wait_on_escape(25)); // Wait for release
   }
 }
 
@@ -905,30 +932,35 @@ void ControlReadWord() {
   lcd.clear(); // Clear the lcd
   msg_lcd(PSTR("Addr -READ-  Val")); // Prompt user for input
   lcd.setCursor(0, 1);
-  msg_lcd(PSTR("0x..      0x...."));
+  msg_lcd(PSTR("...Connecting..."));
 
-  // Common parameters
-  inputHex.ptr.msg = textAddress; // Assign the text buffer address
-  inputHex.low.c = 'A'; // Text panel valid input starts with character 'A'
-  inputHex.high.c = 'F'; // Text panel valid input ends with character 'F'
-  inputHex.width = 2; // Length of the input panel is 2 characters
-  inputHex.col = 2; // Display input panel at column 2
-  inputHex.row = 1; // Display input panel at row 1
-  inputHex.option = 1; // Option 1 incluess 0-9 as valid characters
+  if (i2c_detect_device(deviceAddress)) {
+    lcd.setCursor(0, 1);
+    msg_lcd(PSTR("0x..      0x...."));
 
-  switch (input_panel(&inputHex)) {
-    case 1:
-      serialCommand = strtoul(textAddress, NULL, 16);
-      serialData = i2c_smbus_read_word(serialCommand);
-      lcdClearSpace(12, 1, 4);
-      lcd.print(serialData, HEX);
-      break;
-    case -1: // Escape (go back to control menu)
-    case -3: // Left (at MSB, go back to control menu)
-      return;
-      break;
-    default:
-      break;
+    // Common parameters
+    inputHex.ptr.msg = textAddress; // Assign the text buffer address
+    inputHex.low.c = 'A'; // Text panel valid input starts with character 'A'
+    inputHex.high.c = 'F'; // Text panel valid input ends with character 'F'
+    inputHex.width = 2; // Length of the input panel is 2 characters
+    inputHex.col = 2; // Display input panel at column 2
+    inputHex.row = 1; // Display input panel at row 1
+    inputHex.option = 1; // Option 1 incluess 0-9 as valid characters
+
+    switch (input_panel(&inputHex)) {
+      case 1:
+        serialCommand = strtoul(textAddress, NULL, 16);
+        serialData = i2c_smbus_read_word(serialCommand);
+        lcdClearSpace(12, 1, 4);
+        lcd.print(serialData, HEX);
+        break;
+      case -1: // Escape (go back to control menu)
+      case -3: // Left (at MSB, go back to control menu)
+        return;
+        break;
+      default: // Invalid
+        break;
+    }
   }
 
   while (wait_on_escape(500) == 0); // Wait for button press
@@ -940,28 +972,35 @@ void ControlReadBlock() {
   byte bytesReceived;
   lcd.clear(); // Clear the lcd
   msg_lcd(PSTR("Block Read: Addr")); // Prompt user for input
+  lcd.setCursor(0, 1);
+  msg_lcd(PSTR("...Connecting..."));
 
-  inputHex.ptr.msg = textAddress; // Assign the text buffer address
-  inputHex.low.c = 'A'; // Text panel valid input starts with character 'A'
-  inputHex.high.c = 'F'; // Text panel valid input ends with character 'F'
-  inputHex.width = 3; // Length of the input panel is 3 characters
-  inputHex.col = 7; // Display input panel at column 7
-  inputHex.row = 1; // Display input panel at row 1
-  inputHex.option = 1; // Option 1 incluess 0-9 as valid characters. Option 0, default, option 1 include 0-9 as valid inputs
-
-  if (input_panel(&inputHex) == 1) { // Only one case here, we want ENTER. Everything else escapes back to control menu
-    serialCommand = strtoul(textAddress, NULL, 16);
-    bytesReceived = i2c_smbus_read_block(serialCommand, i2cBuffer, bufferLen);
-    lcdClearSpace(0, 0, 16);
-    msg_lcd(PSTR("Cmd "));
-    lcd.print(serialCommand, HEX);
-    msg_lcd(PSTR(": "));
-    lcd.print(bytesReceived, DEC);
-    msg_lcd(PSTR(" Bytes"));
-    lcd.setCursor(0, 1);
+  if (i2c_detect_device(deviceAddress)) {
     lcdClearSpace(0, 1, 16);
-    if (bytesReceived > 0 && bytesReceived <= 16) lcd.print(i2cBuffer); // More than 0 bytes, less than 16
-    else msg_lcd(PSTR("ERR:Invalid data"));
+
+    // Common parameters
+    inputHex.ptr.msg = textAddress; // Assign the text buffer address
+    inputHex.low.c = 'A'; // Text panel valid input starts with character 'A'
+    inputHex.high.c = 'F'; // Text panel valid input ends with character 'F'
+    inputHex.width = 3; // Length of the input panel is 3 characters
+    inputHex.col = 7; // Display input panel at column 7
+    inputHex.row = 1; // Display input panel at row 1
+    inputHex.option = 1; // Option 1 incluess 0-9 as valid characters. Option 0, default, option 1 include 0-9 as valid inputs
+
+    if (input_panel(&inputHex) == 1) { // Only one case here, we want ENTER. Everything else escapes back to control menu
+      serialCommand = strtoul(textAddress, NULL, 16);
+      bytesReceived = i2c_smbus_read_block(serialCommand, i2cBuffer, bufferLen);
+      lcdClearSpace(0, 0, 16);
+      msg_lcd(PSTR("Cmd "));
+      lcd.print(serialCommand, HEX);
+      msg_lcd(PSTR(": "));
+      lcd.print(bytesReceived, DEC);
+      msg_lcd(PSTR(" Bytes"));
+      lcd.setCursor(0, 1);
+      lcdClearSpace(0, 1, 16);
+      if (bytesReceived > 0 && bytesReceived <= 16) lcd.print(i2cBuffer); // More than 0 bytes, less than 16
+      else msg_lcd(PSTR("ERR:Invalid data"));
+    }
   }
 
   while (wait_on_escape(500) == 0); // Wait for button press
