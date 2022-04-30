@@ -1,4 +1,13 @@
-/* LCD functions */
+/*****************************************************************************
+
+  LCD functions
+
+  BattMon 2.0 project repository:
+  https://github.com/lpollier/battmon
+  MIT licence
+  Copyright (c) 2020-2022 Loïc POLLIER
+
+*****************************************************************************/
 
 void lcdReinitPhi() {
   init_phi_prompt(&lcd, keypads, function_keys, lcd_columns, lcd_rows, '~'); // Supply the liquid crystal object and the phi_buttons objects. Also supply the column and row of the lcd, and indicator as '>'. You can also use '\x7e', which is a right arrow.

@@ -1,4 +1,13 @@
-/* I2C functions */
+/*****************************************************************************
+
+  I2C functions
+
+  BattMon 2.0 project repository:
+  https://github.com/lpollier/battmon
+  MIT licence
+  Copyright (c) 2020-2022 Loïc POLLIER
+
+*****************************************************************************/
 
 uint8_t i2c_detect_device(uint8_t addr) {
   addr <<= 1; // Shift to make room for read/write bit

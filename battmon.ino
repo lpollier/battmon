@@ -3,7 +3,7 @@
   BattMon 2.0: Made with Arduino Uno + 2x16 LCD keypad shield
 
   I2C/SMBus interface to read Smart Battery Data with an Arduino Uno and a 2x16 LCD keypad shield
-  Monitors data from bq2040 gas gauge equipped in Lithium-Ion battery pack such as for Sony Aibo ERS-2xx (ERA-201B1), ERS-3xx (ERA-301B1) and ERS-7 (ERA-7B1/ERA-7B2) robot series
+  Monitors data from bq2040 gas gauge equipped in Lithium-Ion battery pack such as for the Sony Aibo ERS-2xx (ERA-201B1), ERS-3xx (ERA-301B1) and ERS-7 (ERA-7B1/ERA-7B2) robot series
   Last update: 2022-03-27 released version 2.0.7
 
   Arduino analog input 4 - I2C SDA
@@ -18,16 +18,21 @@
   bq2040 gas gauge datasheet:
   https://www.ti.com/lit/ds/symlink/bq2040.pdf
 
-  Based on "SMBusBattery_Phi - BattMon 1.0" code initiated by FalconFour:
-  https://forum.arduino.cc/index.php?topic=62955.0
-
   Depends on this internal library:
   https://www.arduino.cc/en/Reference/LiquidCrystal
   Depends on these external libraries:
   https://github.com/liudr/phi_prompt
   https://github.com/liudr/phi_interfaces
   https://liudr.wordpress.com/libraries/phi_buttons
-  https://github.com/luceralabs/arduino-libraries/tree/master/i2cmaster
+  http://www.peterfleury.epizy.com/i2cmaster.zip
+
+  Based on "SMBusBattery_Phi/BattMon 1.0" code initiated by FalconFour:
+  https://forum.arduino.cc/t/smbus-laptop-battery-hacker-with-phi_prompt-lcd-user-interface/62728
+
+  BattMon 2.0 project repository:
+  https://github.com/lpollier/battmon
+  MIT licence
+  Copyright (c) 2020-2022 Loïc POLLIER
 
 *****************************************************************************/
 

@@ -1,4 +1,13 @@
-/* Format functions */
+/*****************************************************************************
+
+  Format functions
+
+  BattMon 2.0 project repository:
+  https://github.com/lpollier/battmon
+  MIT licence
+  Copyright (c) 2020-2022 Loïc POLLIER
+
+*****************************************************************************/
 
 void fmtBinary(uint16_t val, byte digitLen, char *buf, unsigned bufLen=0xFF);
 unsigned fmtUnsigned(unsigned long val, char *buf, unsigned bufLen=0xFF, byte digitLen=0);
