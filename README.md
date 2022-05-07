@@ -17,13 +17,15 @@ Here is an example of connection between a Sony Aibo ERA-201B1 battery pack and 
 * Pin 5 = Reserved (Internal temperature thermistor)
 * Pin 6 = Minus [0V] (Pack-)
 
-The Arduino Uno is powered by the battery when pin 4 (/EN) is connected to pin 6 (Pack-), using a switch for example.
+The Arduino Uno is powered by the battery when pin 4 (/EN) is connected to pin 6 (Pack-) using a switch.
 
-You can also power the Arduino Uno with a USB cable. In this case, only pin 6 (Pack-), pin 2 (SMBus Clock) and pin 3 (SMBus Data) must be connected as shown in the [wiring diagram][ERA-201B1_wiring_diagram].
+To avoid discharging the battery unnecessarily, you can also power the Arduino Uno with a USB cable. In this case, it is useless to connect pin 1 (Pack+) or the switch indicated in the [wiring diagram][ERA-201B1_wiring_diagram].
 
 ## Program
 
-The BattMon 2.0 code consists of four Arduino files. A [battmon][battmon] main file and the three [format][format], [i2c][i2c] and [lcd][lcd] dependency files. All these files are to be placed in a project created from the [Arduino IDE][Arduino_IDE] software (1.8.+) to compile the code and then upload the program into your Arduino Uno.
+The BattMon 2.0 code consists of four Arduino files. A [battmon][battmon] main file and three [format][format], [i2c][i2c] and [lcd][lcd] dependency files. All these files are to be placed in a project created from the [Arduino IDE][Arduino_IDE] software (1.8.+) to compile the code and then upload the program into your Arduino Uno.
+
+Remember to place these four files in a project directory whose name is that of the [battmon][battmon] main file so that it can be compiled.
 
 ## Libraries
 
@@ -38,8 +40,6 @@ The code also needs for its compilation the internal LiquidCrystal library and t
 | i2cmaster | [libraries/i2cmaster.zip][i2cmaster] |
 
 Go to Sketch > Include Library > Add .Zip Library and add them one by one. The LiquidCrystal library is already included. More help with this on [instructables][instructables].
-
-Remember to place the [format][format], [i2c][i2c] and [lcd][lcd] dependencies in the same project directory as [battmon][battmon] main file so that it can be compiled.
 
 ## Settings
 
@@ -87,7 +87,7 @@ BattMon 2.0 project is based on the [SMBusBattery_Phi/BattMon 1.0][SMBusBattery_
 
 ## Bonus
 
-If you are motivated, qualified and experienced in electronics, I propose a [reverse engineering schematic][ERA-201B1_reverse_engineering_schematic] of the PCB inside the Sony Aibo ERA-201B1 battery pack and for the curious and do-it-yourself repair enthusiasts, I provide a [re-cell tutorial][ERA-201B1_recell_tutorial] on how to refill it.
+If you are motivated, qualified and experienced in electronics, I propose a [reverse engineering schematic][ERA-201B1_reverse_engineering_schematic] of the Sony Aibo ERA-201B1 battery pack PCB and for the curious and do-it-yourself repair enthusiasts, I offer a [re-cell tutorial][ERA-201B1_recell_tutorial] on how to refill it.
 
 There is also a promising [Aibo-ERS-xxx-battery][Aibo_ERS_xxx_battery] project by [r00li][r00li] who wants to use newer components to replace the original battery packs while remaining compatible with Aibo robots.
 
