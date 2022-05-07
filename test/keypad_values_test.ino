@@ -1,4 +1,13 @@
-/* Measure keypad values */
+/*****************************************************************************
+
+  Keypad values test
+
+  BattMon 2.0 project repository:
+  https://github.com/lpollier/battmon
+  MIT licence
+  Copyright (c) 2020-2022 Loïc POLLIER
+
+*****************************************************************************/
 
 #include <LiquidCrystal.h>
 // Define LCD pin setting
