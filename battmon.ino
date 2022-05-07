@@ -342,9 +342,9 @@ void setup() {
     delay(400);
     for (x=0; x<=7; x++) for (y=0; y<=7; y++) lcdCustomCharBuffer[x][y] = pgm_read_byte(&lcdStartupLogo_4[x][y]);
     for (x=0; x<=7; x++) lcd.createChar(x, lcdCustomCharBuffer[x]);
-    delay(600);
+    delay(400);
   }
-  delay(200);
+  delay(600);
   for (x=0; x<=20; x++) {
     lcdCharShiftRight(0, 3);
     lcdCharShiftRight(4, 7);
@@ -736,12 +736,6 @@ void ChargeData() {
         y = map(currTemp, lowTemp, highTemp, 8, 0);
         for (x=0; x<=7; x++) if (x >= y) bitSet(lcdCustomCharBuffer[5][x], 0);
         lcd.createChar(5, lcdCustomCharBuffer[5]);
-      }
-      delay(200);
-      if (!i2c_detect_device(deviceAddress)) {
-        while (wait_on_escape(500) == 0); // Wait for button press
-        while (wait_on_escape(25)); // Wait for release
-        return; // Go back to read menu
       }
     } while (wait_on_escape(500) == 0); // Wait for button press
     while (wait_on_escape(25)); // Wait for release
