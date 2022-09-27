@@ -1,8 +1,0 @@
-EESchema-DOCLIB  Version 2.0
-#
-$CMP PS302F-I_SN
-D Microchip PS302F-I_SN, Voltage Protection for 2-Series Cell Li-Ion Batteries (2nd level protection), 8-Pin SOIC
-F https://electronics.stackexchange.com/questions/550228/identifying-a-soic-8-ic-with-302f-marking
-$ENDCMP
-#
-#End Doc Library

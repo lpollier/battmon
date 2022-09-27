@@ -1,0 +1,8 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP MM1302F
+D Mitsumi MM1302F, Voltage Protection for 2-Series Cell Li-Ion Batteries (2nd level protection), 8-Pin SOIC
+F https://cdn.datasheetspdf.com/pdf-down/M/M/1/MM1302F_MITSUMIELECTRIC.pdf
+$ENDCMP
+#
+#End Doc Library

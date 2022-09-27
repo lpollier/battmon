@@ -1,0 +1,13 @@
+(sym_lib_table
+  (lib (name "24LC01B-I_SN")(type "Legacy")(uri "${KIPRJMOD}/libraries/24LC01B-I_SN/24LC01B-I_SN.lib")(options "")(descr ""))
+  (lib (name "BAV70WT1G")(type "Legacy")(uri "${KIPRJMOD}/libraries/BAV70WT1G/BAV70WT1G.lib")(options "")(descr ""))
+  (lib (name "BQ2040SN-C408")(type "Legacy")(uri "${KIPRJMOD}/libraries/BQ2040SN-C408/BQ2040SN-C408.lib")(options "")(descr ""))
+  (lib (name "MUN5113T1G")(type "Legacy")(uri "${KIPRJMOD}/libraries/MUN5113T1G/MUN5113T1G.lib")(options "")(descr ""))
+  (lib (name "S-8232AAFT")(type "Legacy")(uri "${KIPRJMOD}/libraries/S-8232AAFT/S-8232AAFT.lib")(options "")(descr ""))
+  (lib (name "SFD-047A")(type "Legacy")(uri "${KIPRJMOD}/libraries/SFD-047A/SFD-047A.lib")(options "")(descr ""))
+  (lib (name "SI4425BDY-T1-E3")(type "Legacy")(uri "${KIPRJMOD}/libraries/SI4425BDY-T1-E3/SI4425BDY-T1-E3.lib")(options "")(descr ""))
+  (lib (name "SI4884BDY-T1-E3")(type "Legacy")(uri "${KIPRJMOD}/libraries/SI4884BDY-T1-E3/SI4884BDY-T1-E3.lib")(options "")(descr ""))
+  (lib (name "SSM3K315T")(type "Legacy")(uri "${KIPRJMOD}/libraries/SSM3K315T/SSM3K315T.lib")(options "")(descr ""))
+  (lib (name "TLV70433DBVR")(type "Legacy")(uri "${KIPRJMOD}/libraries/TLV70433DBVR/TLV70433DBVR.lib")(options "")(descr ""))
+  (lib (name "MM1302F")(type "Legacy")(uri "${KIPRJMOD}/libraries/MM1302F/MM1302F.lib")(options "")(descr ""))
+)
