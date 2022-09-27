@@ -2,7 +2,7 @@
 
 Monitors the characteristics of your battery equipped with the bq2040 gas gauge.
 
-BattMon 2.0 is a toolkit that works with an Arduino Uno and a 2x16 LCD keypad shield to access parameters from a bq2040 gas gauge such as Voltage, Current, State of Charge, Temperature, Remaining Capacity or Cycle Count. This fuel gauge and other TI products like the bq2060, have been included in Lithium-Ion battery pack, especially for the Sony Aibo ERS-2xx (ERA-201B1), ERS-3xx (ERA-301B1) and ERS-7 (ERA-7B1/ERA-7B2) robot series.
+BattMon 2.0 is a toolkit that works with an Arduino Uno and a 2x16 LCD keypad shield to access parameters from a bq2040 gas gauge such as Voltage, Current, State of Charge, Temperature, Remaining Capacity or Cycle Count. This fuel gauge and other TI products like the bq2060, have been included in Lithium-ion battery pack, especially for the Sony Aibo ERS-2xx (ERA-201B1), ERS-3xx (ERA-301B1) and ERS-7 (ERA-7B1/ERA-7B2) robot series.
 
 ## Connection
 
@@ -49,7 +49,7 @@ You may have to modify the keypads values in the [battmon][battmon] main file. T
 
 This is the menu tree of the BattMon 2.0 program. The Setup submenu is used to test the connection, the Read info submenu to display the essential parameters of the pack and the Control submenu to read or write the other registers of the gas gauge.
 
-```sh
+```
 Main menu
 ├── Setup
 │   ├── Test SMBus
